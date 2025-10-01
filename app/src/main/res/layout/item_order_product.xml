@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="16dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="8dp">
+
+    <!-- Product Image -->
+    <ImageView
+        android:id="@+id/iv_product_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/bg_image_placeholder"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_cart" />
+
+    <!-- Product Name -->
+    <TextView
+        android:id="@+id/tv_product_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:text="Áo thun nam basic"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_product_image"
+        app:layout_constraintTop_toTopOf="@+id/iv_product_image" />
+
+    <!-- Attributes -->
+    <TextView
+        android:id="@+id/tv_color_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Màu:"
+        android:textColor="#64748B"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/tv_product_name"
+        app:layout_constraintTop_toBottomOf="@+id/tv_product_name" />
+
+    <TextView
+        android:id="@+id/tv_color_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="Đen"
+        android:textColor="#64748B"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_color_label"
+        app:layout_constraintStart_toEndOf="@+id/tv_color_label"
+        app:layout_constraintTop_toTopOf="@+id/tv_color_label" />
+
+    <TextView
+        android:id="@+id/tv_size_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="Size:"
+        android:textColor="#64748B"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_color_value"
+        app:layout_constraintStart_toEndOf="@+id/tv_color_value"
+        app:layout_constraintTop_toTopOf="@+id/tv_color_value" />
+
+    <TextView
+        android:id="@+id/tv_size_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="L"
+        android:textColor="#64748B"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_size_label"
+        app:layout_constraintStart_toEndOf="@+id/tv_size_label"
+        app:layout_constraintTop_toTopOf="@+id/tv_size_label" />
+
+    <!-- Price -->
+    <TextView
+        android:id="@+id/tv_current_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="299,000đ"
+        android:textColor="#EF4444"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/tv_product_name"
+        app:layout_constraintTop_toBottomOf="@+id/tv_color_label" />
+
+    <TextView
+        android:id="@+id/tv_original_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="399,000đ"
+        android:textColor="#94A3B8"
+        android:textSize="12sp"
+        style="@style/StrikethroughText"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_current_price"
+        app:layout_constraintStart_toEndOf="@+id/tv_current_price"
+        app:layout_constraintTop_toTopOf="@+id/tv_current_price" />
+
+    <!-- Quantity -->
+    <TextView
+        android:id="@+id/tv_quantity_x"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="2dp"
+        android:text="x"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_current_price"
+        app:layout_constraintEnd_toStartOf="@+id/tv_quantity"
+        app:layout_constraintTop_toTopOf="@+id/tv_current_price" />
+
+    <TextView
+        android:id="@+id/tv_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:text="2"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_current_price"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_current_price" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
