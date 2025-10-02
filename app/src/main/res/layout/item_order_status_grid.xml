@@ -1,75 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:columnCount="3"
+    android:orientation="vertical"
     android:paddingStart="16dp"
     android:paddingTop="8dp"
     android:paddingEnd="16dp"
-    android:paddingBottom="8dp"
-    android:rowCount="2">
+    android:paddingBottom="8dp">
 
-    <!-- Waiting Payment -->
-    <include
-        layout="@layout/item_order_status"
-        android:layout_width="0dp"
-        android:layout_height="77dp"
-        android:layout_rowWeight="1"
-        android:layout_columnWeight="1"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp" />
+    <!-- First Row - 3 buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
 
-    <!-- Waiting Pickup -->
-    <include
-        layout="@layout/item_order_status"
-        android:layout_width="0dp"
-        android:layout_height="77dp"
-        android:layout_rowWeight="1"
-        android:layout_columnWeight="1"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp" />
+        <!-- Pending Confirmation -->
+        <include
+            android:id="@+id/status_pending_confirmation"
+            layout="@layout/item_order_status"
+            android:layout_width="0dp"
+            android:layout_height="77dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="4dp" />
 
-    <!-- Waiting Delivery -->
-    <include
-        layout="@layout/item_order_status"
-        android:layout_width="0dp"
-        android:layout_height="77dp"
-        android:layout_rowWeight="1"
-        android:layout_columnWeight="1"
-        android:layout_marginStart="4dp"
-        android:layout_marginBottom="4dp" />
+        <!-- Pending Pickup -->
+        <include
+            android:id="@+id/status_pending_pickup"
+            layout="@layout/item_order_status"
+            android:layout_width="0dp"
+            android:layout_height="77dp"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp" />
 
-    <!-- Review -->
-    <include
-        layout="@layout/item_order_status"
-        android:layout_width="0dp"
-        android:layout_height="77dp"
-        android:layout_rowWeight="1"
-        android:layout_columnWeight="1"
-        android:layout_marginEnd="4dp"
-        android:layout_marginTop="4dp" />
+        <!-- Shipping -->
+        <include
+            android:id="@+id/status_shipping"
+            layout="@layout/item_order_status"
+            android:layout_width="0dp"
+            android:layout_height="77dp"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp" />
 
-    <!-- Return -->
-    <include
-        layout="@layout/item_order_status"
-        android:layout_width="0dp"
-        android:layout_height="77dp"
-        android:layout_rowWeight="1"
-        android:layout_columnWeight="1"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginTop="4dp" />
+    </LinearLayout>
 
-    <!-- Cancelled -->
-    <include
-        layout="@layout/item_order_status"
-        android:layout_width="0dp"
-        android:layout_height="77dp"
-        android:layout_rowWeight="1"
-        android:layout_columnWeight="1"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp" />
+    <!-- Second Row - 2 buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-</GridLayout>
+        <!-- Return/Refund -->
+        <include
+            android:id="@+id/status_return_refund"
+            layout="@layout/item_order_status"
+            android:layout_width="0dp"
+            android:layout_height="77dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="4dp" />
+
+        <!-- Review -->
+        <include
+            android:id="@+id/status_review"
+            layout="@layout/item_order_status"
+            android:layout_width="0dp"
+            android:layout_height="77dp"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

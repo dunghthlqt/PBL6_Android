@@ -84,7 +84,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.shopVoucherFragment,
                 R.id.platformVoucherFragment,
                 R.id.shippingMethodFragment,
-                R.id.productDetailFragment
+                R.id.productDetailFragment,
+                R.id.orderHistoryFragment
             )
             
             if (destination.id in hideBottomNavScreens) {

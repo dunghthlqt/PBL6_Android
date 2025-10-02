@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.demo.pbl6_android.R
 import com.demo.pbl6_android.data.ThemePreferences
 import com.demo.pbl6_android.databinding.FragmentAccountBinding
@@ -40,8 +41,11 @@ class AccountFragment : Fragment() {
     private fun setupMenuItems() {
         // View all orders
         binding.root.findViewById<View>(R.id.view_all_orders)?.setOnClickListener {
-            // TODO: Navigate to order history
+            findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment)
         }
+        
+        // Setup order status buttons
+        setupOrderStatusButtons()
         
         // Account management menus - setup with data
         setupMenuItem(
@@ -111,6 +115,66 @@ class AccountFragment : Fragment() {
         }
     }
 
+    private fun setupOrderStatusButtons() {
+        // Pending Payment
+        setupOrderStatus(
+            R.id.status_pending_confirmation,
+            R.drawable.ic_order_payment,
+            "Chờ thanh toán"
+        ) {
+            findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment)
+        }
+        
+        // Pending Pickup
+        setupOrderStatus(
+            R.id.status_pending_pickup,
+            R.drawable.ic_order_pickup,
+            "Chờ lấy hàng"
+        ) {
+            findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment)
+        }
+        
+        // Shipping
+        setupOrderStatus(
+            R.id.status_shipping,
+            R.drawable.ic_order_shipping,
+            "Chờ giao hàng"
+        ) {
+            findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment)
+        }
+        
+        // Return/Refund
+        setupOrderStatus(
+            R.id.status_return_refund,
+            R.drawable.ic_order_return,
+            "Trả hàng/Hoàn tiền"
+        ) {
+            findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment)
+        }
+        
+        // Review
+        setupOrderStatus(
+            R.id.status_review,
+            R.drawable.ic_order_review,
+            "Đánh giá"
+        ) {
+            findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment)
+        }
+    }
+    
+    private fun setupOrderStatus(
+        statusId: Int,
+        iconRes: Int,
+        label: String,
+        onClick: () -> Unit
+    ) {
+        binding.root.findViewById<View>(statusId)?.apply {
+            findViewById<android.widget.ImageView>(R.id.icon)?.setImageResource(iconRes)
+            findViewById<android.widget.TextView>(R.id.label)?.text = label
+            setOnClickListener { onClick() }
+        }
+    }
+    
     private fun setupMenuItem(
         menuId: Int,
         iconRes: Int,

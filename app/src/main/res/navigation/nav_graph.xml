@@ -38,7 +38,15 @@
         <action
             android:id="@+id/action_accountFragment_to_landingPageFragment"
             app:destination="@id/landingPageFragment" />
+        <action
+            android:id="@+id/action_accountFragment_to_orderHistoryFragment"
+            app:destination="@id/orderHistoryFragment" />
     </fragment>
+    
+    <fragment
+        android:id="@+id/orderHistoryFragment"
+        android:name="com.demo.pbl6_android.ui.order.OrderHistoryFragment"
+        android:label="Order History" />
 
     <fragment
         android:id="@+id/cartFragment"
