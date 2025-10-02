@@ -6,14 +6,17 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.demo.pbl6_android.data.CartManager
 import com.demo.pbl6_android.data.ThemePreferences
 import com.demo.pbl6_android.databinding.ActivityMainBinding
+import com.google.android.material.badge.BadgeDrawable
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var themePreferences: ThemePreferences
+    private var cartBadge: BadgeDrawable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         
         setupNavigation()
         observeThemeChanges()
+        observeCartBadge()
     }
 
     private fun setupNavigation() {
@@ -74,15 +78,16 @@ class MainActivity : AppCompatActivity() {
                 R.id.cartFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_cart
             }
             
-            // Hide bottom navigation for payment flow screens
-            val paymentFlowScreens = setOf(
+            // Hide bottom navigation for payment flow screens and product detail
+            val hideBottomNavScreens = setOf(
                 R.id.orderFragment,
                 R.id.shopVoucherFragment,
                 R.id.platformVoucherFragment,
-                R.id.shippingMethodFragment
+                R.id.shippingMethodFragment,
+                R.id.productDetailFragment
             )
             
-            if (destination.id in paymentFlowScreens) {
+            if (destination.id in hideBottomNavScreens) {
                 binding.bottomNavigation.visibility = android.view.View.GONE
             } else {
                 binding.bottomNavigation.visibility = android.view.View.VISIBLE
@@ -118,6 +123,22 @@ class MainActivity : AppCompatActivity() {
                         AppCompatDelegate.MODE_NIGHT_NO
                     }
                     AppCompatDelegate.setDefaultNightMode(mode)
+                }
+            }
+        }
+    }
+    
+    private fun observeCartBadge() {
+        cartBadge = binding.bottomNavigation.getOrCreateBadge(R.id.nav_cart)
+        cartBadge?.isVisible = false
+        
+        lifecycleScope.launch {
+            CartManager.cartItemCount.collect { count ->
+                if (count > 0) {
+                    cartBadge?.number = count
+                    cartBadge?.isVisible = true
+                } else {
+                    cartBadge?.isVisible = false
                 }
             }
         }

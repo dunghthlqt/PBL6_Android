@@ -5,13 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import com.demo.pbl6_android.R
+import com.demo.pbl6_android.data.ProductRepository
 import com.demo.pbl6_android.databinding.FragmentLandingPageBinding
+import com.demo.pbl6_android.ui.landing.adapter.ProductAdapter
 
 class LandingPageFragment : Fragment() {
 
     private var _binding: FragmentLandingPageBinding? = null
     private val binding: FragmentLandingPageBinding
         get() = _binding!!
+    
+    private lateinit var productAdapter: ProductAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,27 +32,37 @@ class LandingPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
+        loadProducts()
     }
 
     private fun setupViews() {
-        // Setup search functionality
         binding.searchEditText.setOnClickListener {
             // TODO: Navigate to search screen
         }
         
-        // Setup search button
         binding.searchButton.setOnClickListener {
             // TODO: Navigate to search results
         }
+    }
+    
+    private fun loadProducts() {
+        val products = ProductRepository.getAllProducts()
         
-        // Setup product cards click listeners
-        binding.productCard1.setOnClickListener {
-            // TODO: Navigate to product detail
+        productAdapter = ProductAdapter(products) { product ->
+            navigateToProductDetail(product.id)
         }
         
-        binding.productCard2.setOnClickListener {
-            // TODO: Navigate to product detail
+        binding.rvProducts.apply {
+            layoutManager = GridLayoutManager(requireContext(), 2)
+            adapter = productAdapter
         }
+    }
+    
+    private fun navigateToProductDetail(productId: String) {
+        val bundle = Bundle().apply {
+            putString("productId", productId)
+        }
+        findNavController().navigate(R.id.action_landingPageFragment_to_productDetailFragment, bundle)
     }
 
     override fun onDestroyView() {

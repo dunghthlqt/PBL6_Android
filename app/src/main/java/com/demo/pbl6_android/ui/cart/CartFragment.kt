@@ -5,13 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.demo.pbl6_android.R
+import com.demo.pbl6_android.data.CartManager
 import com.demo.pbl6_android.databinding.FragmentCartBinding
 import com.demo.pbl6_android.ui.cart.adapter.CartShopAdapter
 import com.demo.pbl6_android.ui.cart.model.CartShop
 import com.demo.pbl6_android.ui.cart.model.CartProduct
+import kotlinx.coroutines.launch
 
 class CartFragment : Fragment() {
 
@@ -36,7 +39,7 @@ class CartFragment : Fragment() {
         
         setupViews()
         setupRecyclerView()
-        loadSampleData()
+        observeCart()
     }
 
     private fun setupViews() {
@@ -93,70 +96,25 @@ class CartFragment : Fragment() {
         }
     }
 
-    private fun loadSampleData() {
-        cartShops.clear()
-        
-        // Shop 1
-        val shop1Products = mutableListOf(
-            CartProduct(
-                id = "1",
-                name = "Áo thun nam basic",
-                color = "Đen",
-                size = "L",
-                currentPrice = 299000,
-                originalPrice = 399000,
-                quantity = 2,
-                imageUrl = "",
-                isSelected = false
-            ),
-            CartProduct(
-                id = "2",
-                name = "Quần jean nữ skinny",
-                color = "Xanh đậm",
-                size = "M",
-                currentPrice = 599000,
-                originalPrice = 799000,
-                quantity = 1,
-                imageUrl = "",
-                isSelected = false
-            )
-        )
-        
-        cartShops.add(
-            CartShop(
-                id = "shop1",
-                name = "Thời trang ABC Store",
-                products = shop1Products,
-                isSelected = false
-            )
-        )
-        
-        // Shop 2
-        val shop2Products = mutableListOf(
-            CartProduct(
-                id = "3",
-                name = "Giày sneaker unisex",
-                color = "Trắng",
-                size = "42",
-                currentPrice = 899000,
-                originalPrice = 1199000,
-                quantity = 1,
-                imageUrl = "",
-                isSelected = false
-            )
-        )
-        
-        cartShops.add(
-            CartShop(
-                id = "shop2",
-                name = "Giày dép XYZ Shop",
-                products = shop2Products,
-                isSelected = false
-            )
-        )
-        
-        cartShopAdapter.submitList(cartShops)
-        updateTotalPrice()
+    private fun observeCart() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            CartManager.cartShops.collect { shops ->
+                cartShops.clear()
+                cartShops.addAll(shops)
+                cartShopAdapter.submitList(cartShops.toList())
+                updateTotalPrice()
+                updateEmptyState()
+            }
+        }
+    }
+    
+    private fun updateEmptyState() {
+        if (cartShops.isEmpty()) {
+            binding.rvCartItems.visibility = View.GONE
+            binding.tvItemCount.text = "(0 sản phẩm)"
+        } else {
+            binding.rvCartItems.visibility = View.VISIBLE
+        }
     }
 
     private fun selectAllItems(isSelected: Boolean) {

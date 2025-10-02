@@ -11,6 +11,24 @@
         <action
             android:id="@+id/action_landingPageFragment_to_accountFragment"
             app:destination="@id/accountFragment" />
+        <action
+            android:id="@+id/action_landingPageFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/productDetailFragment"
+        android:name="com.demo.pbl6_android.ui.product.ProductDetailFragment"
+        android:label="Product Detail">
+        <argument
+            android:name="productId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_productDetailFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_productDetailFragment_to_orderFragment"
+            app:destination="@id/orderFragment" />
     </fragment>
 
     <fragment

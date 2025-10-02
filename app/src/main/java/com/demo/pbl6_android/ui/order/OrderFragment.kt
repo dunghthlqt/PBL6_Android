@@ -167,49 +167,25 @@ class OrderFragment : Fragment() {
 
         // Get selected products from cart
         val cartShops = OrderData.selectedShops
-        if (cartShops.isNotEmpty()) {
-            cartShops.forEach { cartShop ->
-                val products = cartShop.products.map { cartProduct ->
-                    OrderProduct(
-                        id = cartProduct.id,
-                        name = cartProduct.name,
-                        color = cartProduct.color,
-                        size = cartProduct.size,
-                        currentPrice = cartProduct.currentPrice,
-                        originalPrice = cartProduct.originalPrice,
-                        quantity = cartProduct.quantity,
-                        imageUrl = cartProduct.imageUrl
-                    )
-                }
-                
-                orderShops.add(
-                    OrderShop(
-                        shopId = cartShop.id,
-                        shopName = cartShop.name,
-                        products = products
-                    )
+        cartShops.forEach { cartShop ->
+            val products = cartShop.products.map { cartProduct ->
+                OrderProduct(
+                    id = cartProduct.id,
+                    name = cartProduct.name,
+                    color = cartProduct.color,
+                    size = cartProduct.size,
+                    currentPrice = cartProduct.currentPrice,
+                    originalPrice = cartProduct.originalPrice,
+                    quantity = cartProduct.quantity,
+                    imageUrl = cartProduct.imageUrl
                 )
             }
-        } else {
-            // Fallback to sample data if no cart data
-            val shop1Products = listOf(
-                OrderProduct(
-                    id = "1",
-                    name = "Áo thun nam basic",
-                    color = "Đen",
-                    size = "L",
-                    currentPrice = 299000,
-                    originalPrice = 399000,
-                    quantity = 2,
-                    imageUrl = ""
-                )
-            )
-
+            
             orderShops.add(
                 OrderShop(
-                    shopId = "shop1",
-                    shopName = "Thời trang ABC Store",
-                    products = shop1Products
+                    shopId = cartShop.id,
+                    shopName = cartShop.name,
+                    products = products
                 )
             )
         }

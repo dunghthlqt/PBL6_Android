@@ -17,6 +17,7 @@
     <color name="text_primary_light">#1E293B</color>
     <color name="text_primary_dark">#F1F5F9</color>
     <color name="text_secondary">#64748B</color>
+    <color name="stroke_color">#E2E8F0</color>
     
     <!-- Cart Colors -->
     <color name="delete_background">#EF4444</color>

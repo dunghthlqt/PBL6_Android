@@ -165,14 +165,14 @@ class AccountFragment : Fragment() {
             ?.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.menu_switch)
         
         darkModeSwitch?.setOnCheckedChangeListener { _, isChecked ->
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 themePreferences.saveDarkModeEnabled(isChecked)
             }
         }
     }
 
     private fun observeThemeSettings() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             themePreferences.isDarkModeEnabled.collect { isDarkMode ->
                 val darkModeSwitch = binding.root.findViewById<View>(R.id.menu_dark_mode)
                     ?.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.menu_switch)

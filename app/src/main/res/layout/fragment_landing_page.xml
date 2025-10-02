@@ -59,140 +59,20 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Main Content with ScrollView -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scroll_view"
+    <!-- Product Grid -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_products"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fillViewport="true"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="89dp">
-
-            <!-- Product Card 1 -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/product_card_1"
-                android:layout_width="0dp"
-                android:layout_height="208dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="1dp"
-                app:layout_constraintEnd_toStartOf="@+id/product_card_2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <!-- Product Image Placeholder -->
-                    <View
-                        android:id="@+id/product_image_1"
-                        android:layout_width="0dp"
-                        android:layout_height="160dp"
-                        android:background="#E2E8F0"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <!-- Rating Star -->
-                    <TextView
-                        android:id="@+id/rating_star_1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginTop="8dp"
-                        android:text="★"
-                        android:textColor="#F59E0B"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/product_image_1" />
-
-                    <!-- Sold Count -->
-                    <TextView
-                        android:id="@+id/sold_count_1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="12dp"
-                        android:text="Đã bán"
-                        android:textColor="#64748B"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/product_image_1" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Product Card 2 -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/product_card_2"
-                android:layout_width="0dp"
-                android:layout_height="208dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="1dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/product_card_1"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <!-- Product Image Placeholder -->
-                    <View
-                        android:id="@+id/product_image_2"
-                        android:layout_width="0dp"
-                        android:layout_height="160dp"
-                        android:background="#E2E8F0"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <!-- Rating Star -->
-                    <TextView
-                        android:id="@+id/rating_star_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginTop="8dp"
-                        android:text="★"
-                        android:textColor="#F59E0B"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/product_image_2" />
-
-                    <!-- Sold Count -->
-                    <TextView
-                        android:id="@+id/sold_count_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="12dp"
-                        android:text="Đã bán"
-                        android:textColor="#64748B"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/product_image_2" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.cardview.widget.CardView>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.core.widget.NestedScrollView>
+        app:layout_constraintTop_toBottomOf="@+id/top_bar"
+        tools:itemCount="8"
+        tools:listitem="@layout/item_product_card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
