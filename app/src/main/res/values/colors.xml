@@ -22,4 +22,7 @@
     <!-- Cart Colors -->
     <color name="delete_background">#EF4444</color>
     <color name="product_selected_bg">#F8F9FF</color>
+    
+    <!-- Rating Color -->
+    <color name="rating_color">#F59E0B</color>
 </resources>

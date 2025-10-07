@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.demo.pbl6_android.data.OrderRepository
 import com.demo.pbl6_android.data.model.OrderStatus
@@ -77,7 +78,7 @@ class OrderListFragment : Fragment() {
                 // TODO: Implement buy again
             },
             onViewDetailsClick = { order ->
-                // TODO: Implement view details
+                navigateToOrderDetail(order)
             },
             onPayNowClick = { order ->
                 // TODO: Implement pay now
@@ -102,6 +103,18 @@ class OrderListFragment : Fragment() {
     private fun updateEmptyState(isEmpty: Boolean) {
         binding.emptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
         binding.recyclerView.visibility = if (isEmpty) View.GONE else View.VISIBLE
+    }
+
+    private fun navigateToOrderDetail(order: com.demo.pbl6_android.data.model.Order) {
+        val bundle = Bundle().apply {
+            putString("orderId", order.orderId)
+        }
+        
+        // Navigate from parent fragment (OrderHistoryFragment)
+        parentFragment?.findNavController()?.navigate(
+            com.demo.pbl6_android.R.id.action_orderHistoryFragment_to_orderDetailFragment,
+            bundle
+        )
     }
 
     override fun onDestroyView() {

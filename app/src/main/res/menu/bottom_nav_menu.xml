@@ -9,9 +9,9 @@
         android:icon="@drawable/ic_category"
         android:title="Danh mục" />
     <item
-        android:id="@+id/nav_notification"
-        android:icon="@drawable/ic_notification"
-        android:title="Thông báo" />
+        android:id="@+id/nav_message"
+        android:icon="@drawable/ic_chat"
+        android:title="Tin nhắn" />
     <item
         android:id="@+id/nav_cart"
         android:icon="@drawable/ic_cart"

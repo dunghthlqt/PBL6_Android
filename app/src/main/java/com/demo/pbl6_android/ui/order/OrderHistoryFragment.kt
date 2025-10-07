@@ -37,6 +37,10 @@ class OrderHistoryFragment : Fragment() {
         setupViews()
         setupViewPager()
         setupTabLayout()
+        
+        // Set initial tab from arguments
+        val initialTab = arguments?.getInt("initialTab", 0) ?: 0
+        binding.viewPager.setCurrentItem(initialTab, false)
     }
 
     private fun setupViews() {

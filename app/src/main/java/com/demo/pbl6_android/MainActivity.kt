@@ -47,11 +47,15 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_category -> {
-                    // TODO: Navigate to category
+                    if (navController.currentDestination?.id != R.id.categoriesFragment) {
+                        navController.navigate(R.id.categoriesFragment)
+                    }
                     true
                 }
-                R.id.nav_notification -> {
-                    // TODO: Navigate to notifications
+                R.id.nav_message -> {
+                    if (navController.currentDestination?.id != R.id.messageListFragment) {
+                        navController.navigate(R.id.messageListFragment)
+                    }
                     true
                 }
                 R.id.nav_cart -> {
@@ -74,8 +78,10 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.landingPageFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_home
+                R.id.categoriesFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_category
                 R.id.accountFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_account
                 R.id.cartFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_cart
+                R.id.messageListFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_message
             }
             
             // Hide bottom navigation for payment flow screens and product detail
@@ -85,7 +91,13 @@ class MainActivity : AppCompatActivity() {
                 R.id.platformVoucherFragment,
                 R.id.shippingMethodFragment,
                 R.id.productDetailFragment,
-                R.id.orderHistoryFragment
+                R.id.orderHistoryFragment,
+                R.id.orderDetailFragment,
+                R.id.chatFragment,
+                R.id.userInformationFragment,
+                R.id.shippingAddressFragment,
+                R.id.paymentMethodsFragment,
+                R.id.categoryProductsFragment
             )
             
             if (destination.id in hideBottomNavScreens) {

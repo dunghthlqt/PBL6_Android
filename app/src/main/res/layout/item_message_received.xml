@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Message bubble received from shop (left side) -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="4dp">
+
+    <!-- Shop Avatar -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_avatar"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/card_message"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_light"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/ic_account" />
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Message Bubble -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/card_avatar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="240dp"
+        app:layout_constraintHorizontal_bias="0.0">
+
+        <TextView
+            android:id="@+id/tv_message_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:lineSpacingExtra="4dp"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            tools:text="Chào bạn! Cảm ơn bạn đã quan tâm đến sản phẩm của shop. Bạn muốn hỏi gì về sản phẩm này ạ?" />
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Time -->
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_message"
+        tools:text="14:32" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

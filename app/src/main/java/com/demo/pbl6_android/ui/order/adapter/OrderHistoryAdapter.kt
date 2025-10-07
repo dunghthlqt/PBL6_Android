@@ -46,6 +46,11 @@ class OrderHistoryAdapter(
 
         fun bind(order: Order) {
             with(binding) {
+                // Navigate to detail on click
+                root.setOnClickListener {
+                    onViewDetailsClick(order)
+                }
+                
                 // Display first product item
                 val firstItem = order.items.firstOrNull()
                 firstItem?.let { item ->

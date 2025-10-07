@@ -78,8 +78,7 @@ class ProductDetailFragment : Fragment() {
             }
             
             btnChat.setOnClickListener {
-                // TODO: Open chat
-                showToast("Chức năng chat đang phát triển")
+                openChatWithShop()
             }
             
             btnAddToCart.setOnClickListener {
@@ -302,6 +301,21 @@ class ProductDetailFragment : Fragment() {
             count >= 1000 -> "%.1fk".format(count / 1000.0)
             else -> count.toString()
         }
+    }
+    
+    private fun openChatWithShop() {
+        val currentProduct = product ?: return
+        
+        // Find or create conversation with this shop
+        val conversations = com.demo.pbl6_android.data.ChatManager.conversations.value
+        val existingConversation = conversations.find { it.shopId == currentProduct.shopId }
+        
+        val conversationId = existingConversation?.id ?: "conv_${currentProduct.shopId}"
+        
+        val bundle = Bundle().apply {
+            putString("conversationId", conversationId)
+        }
+        findNavController().navigate(R.id.action_productDetailFragment_to_chatFragment, bundle)
     }
     
     private fun showToast(message: String) {

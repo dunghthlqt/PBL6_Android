@@ -39,9 +39,9 @@ class AccountFragment : Fragment() {
     }
 
     private fun setupMenuItems() {
-        // View all orders
+        // View all orders - default to first tab (Pending Payment)
         binding.root.findViewById<View>(R.id.view_all_orders)?.setOnClickListener {
-            findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment)
+            navigateToOrderHistory(0)
         }
         
         // Setup order status buttons
@@ -54,7 +54,7 @@ class AccountFragment : Fragment() {
             "Thông tin cá nhân",
             "Cập nhật thông tin tài khoản"
         ) {
-            // TODO: Navigate to personal info
+            findNavController().navigate(R.id.action_accountFragment_to_userInformationFragment)
         }
         
         setupMenuItem(
@@ -63,7 +63,7 @@ class AccountFragment : Fragment() {
             "Địa chỉ giao hàng",
             "Quản lý địa chỉ nhận hàng"
         ) {
-            // TODO: Navigate to address management
+            findNavController().navigate(R.id.action_accountFragment_to_shippingAddressFragment)
         }
         
         setupMenuItem(
@@ -72,7 +72,7 @@ class AccountFragment : Fragment() {
             "Phương thức thanh toán",
             "Thẻ và ví điện tử"
         ) {
-            // TODO: Navigate to payment methods
+            findNavController().navigate(R.id.action_accountFragment_to_paymentMethodsFragment)
         }
         
         // Settings menus with switches
@@ -116,49 +116,49 @@ class AccountFragment : Fragment() {
     }
 
     private fun setupOrderStatusButtons() {
-        // Pending Payment
+        // Pending Payment - Tab 0
         setupOrderStatus(
             R.id.status_pending_confirmation,
             R.drawable.ic_order_payment,
             "Chờ thanh toán"
         ) {
-            findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment)
+            navigateToOrderHistory(0)
         }
         
-        // Pending Pickup
+        // Pending Pickup - Tab 1
         setupOrderStatus(
             R.id.status_pending_pickup,
             R.drawable.ic_order_pickup,
             "Chờ lấy hàng"
         ) {
-            findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment)
+            navigateToOrderHistory(1)
         }
         
-        // Shipping
+        // Shipping - Tab 2
         setupOrderStatus(
             R.id.status_shipping,
             R.drawable.ic_order_shipping,
             "Chờ giao hàng"
         ) {
-            findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment)
+            navigateToOrderHistory(2)
         }
         
-        // Return/Refund
+        // Return/Refund - Tab 4
         setupOrderStatus(
             R.id.status_return_refund,
             R.drawable.ic_order_return,
             "Trả hàng/Hoàn tiền"
         ) {
-            findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment)
+            navigateToOrderHistory(4)
         }
         
-        // Review
+        // Review (Delivered) - Tab 3
         setupOrderStatus(
             R.id.status_review,
             R.drawable.ic_order_review,
             "Đánh giá"
         ) {
-            findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment)
+            navigateToOrderHistory(3)
         }
     }
     
@@ -243,6 +243,13 @@ class AccountFragment : Fragment() {
                 darkModeSwitch?.isChecked = isDarkMode
             }
         }
+    }
+    
+    private fun navigateToOrderHistory(tabIndex: Int) {
+        val bundle = Bundle().apply {
+            putInt("initialTab", tabIndex)
+        }
+        findNavController().navigate(R.id.action_accountFragment_to_orderHistoryFragment, bundle)
     }
 
     override fun onDestroyView() {

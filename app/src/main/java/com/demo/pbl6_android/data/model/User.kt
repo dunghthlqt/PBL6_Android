@@ -1,0 +1,24 @@
+package com.demo.pbl6_android.data.model
+
+data class User(
+    val id: String,
+    val fullName: String,
+    val email: String,
+    val phoneNumber: String,
+    val address: String,
+    val birthday: String,
+    val gender: String,
+    val avatarUrl: String,
+    val memberSince: String,
+    val orderCount: Int,
+    val loyaltyPoints: Int
+)
+
+data class UserSettings(
+    var orderNotification: Boolean = true,
+    var promotionNotification: Boolean = false,
+    var newsNotification: Boolean = true,
+    var showPhone: Boolean = true,
+    var showEmail: Boolean = false
+)
+
