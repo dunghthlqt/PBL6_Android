@@ -1,5 +1,6 @@
 package com.demo.pbl6_android.ui.account
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +9,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.demo.pbl6_android.LoginActivity
 import com.demo.pbl6_android.R
 import com.demo.pbl6_android.data.UserManager
+import com.demo.pbl6_android.data.auth.AuthManager
 import com.demo.pbl6_android.databinding.FragmentUserInformationBinding
 import com.demo.pbl6_android.databinding.ItemInfoFieldBinding
 import com.demo.pbl6_android.databinding.ItemSwitchSettingBinding
@@ -20,6 +23,8 @@ class UserInformationFragment : Fragment() {
     private var _binding: FragmentUserInformationBinding? = null
     private val binding: FragmentUserInformationBinding
         get() = _binding!!
+    
+    private lateinit var authManager: AuthManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,6 +37,8 @@ class UserInformationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        authManager = AuthManager.getInstance(requireContext())
         
         setupViews()
         setupPersonalInfoFields()
@@ -238,10 +245,17 @@ class UserInformationFragment : Fragment() {
             .setTitle("Đăng xuất")
             .setMessage("Bạn có chắc chắn muốn đăng xuất không?")
             .setPositiveButton("Đăng xuất") { _, _ ->
+                // Clear auth data
+                authManager.logout()
                 UserManager.logout()
+                
                 showToast("Đã đăng xuất")
-                // TODO: Navigate to login screen
-                findNavController().navigateUp()
+                
+                // Navigate to login screen
+                val intent = Intent(requireContext(), LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                requireActivity().finish()
             }
             .setNegativeButton("Hủy", null)
             .show()

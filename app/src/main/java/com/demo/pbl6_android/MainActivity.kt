@@ -1,5 +1,6 @@
 package com.demo.pbl6_android
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -8,6 +9,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.demo.pbl6_android.data.CartManager
 import com.demo.pbl6_android.data.ThemePreferences
+import com.demo.pbl6_android.data.auth.AuthManager
 import com.demo.pbl6_android.databinding.ActivityMainBinding
 import com.google.android.material.badge.BadgeDrawable
 import kotlinx.coroutines.launch
@@ -16,12 +18,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var themePreferences: ThemePreferences
+    private lateinit var authManager: AuthManager
     private var cartBadge: BadgeDrawable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
         themePreferences = ThemePreferences(this)
+        authManager = AuthManager.getInstance(this)
         applyTheme()
         
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -53,22 +57,40 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_message -> {
-                    if (navController.currentDestination?.id != R.id.messageListFragment) {
-                        navController.navigate(R.id.messageListFragment)
+                    // Check authentication
+                    if (!authManager.isUserLoggedIn()) {
+                        navigateToLogin()
+                        false
+                    } else {
+                        if (navController.currentDestination?.id != R.id.messageListFragment) {
+                            navController.navigate(R.id.messageListFragment)
+                        }
+                        true
                     }
-                    true
                 }
                 R.id.nav_cart -> {
-                    if (navController.currentDestination?.id != R.id.cartFragment) {
-                        navController.navigate(R.id.cartFragment)
+                    // Check authentication
+                    if (!authManager.isUserLoggedIn()) {
+                        navigateToLogin()
+                        false
+                    } else {
+                        if (navController.currentDestination?.id != R.id.cartFragment) {
+                            navController.navigate(R.id.cartFragment)
+                        }
+                        true
                     }
-                    true
                 }
                 R.id.nav_account -> {
-                    if (navController.currentDestination?.id != R.id.accountFragment) {
-                        navController.navigate(R.id.accountFragment)
+                    // Check authentication
+                    if (!authManager.isUserLoggedIn()) {
+                        navigateToLogin()
+                        false
+                    } else {
+                        if (navController.currentDestination?.id != R.id.accountFragment) {
+                            navController.navigate(R.id.accountFragment)
+                        }
+                        true
                     }
-                    true
                 }
                 else -> false
             }
@@ -155,5 +177,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+    
+    private fun navigateToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
     }
 }
