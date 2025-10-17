@@ -10,6 +10,7 @@
     
     <!-- App Colors -->
     <color name="primary">#4318D1</color>
+    <color name="purple_primary">#4318D1</color>
     <color name="background_light">#F8FAFC</color>
     <color name="background_dark">#0F172A</color>
     <color name="surface_light">#FFFFFF</color>

@@ -9,6 +9,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.demo.pbl6_android.data.CartManager
 import com.demo.pbl6_android.data.ThemePreferences
+import com.demo.pbl6_android.data.UserMode
+import com.demo.pbl6_android.data.UserModeManager
 import com.demo.pbl6_android.data.auth.AuthManager
 import com.demo.pbl6_android.databinding.ActivityMainBinding
 import com.google.android.material.badge.BadgeDrawable
@@ -19,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var themePreferences: ThemePreferences
     private lateinit var authManager: AuthManager
+    private lateinit var userModeManager: UserModeManager
     private var cartBadge: BadgeDrawable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,22 +29,40 @@ class MainActivity : AppCompatActivity() {
         
         themePreferences = ThemePreferences(this)
         authManager = AuthManager.getInstance(this)
+        userModeManager = UserModeManager.getInstance(this)
         applyTheme()
         
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         
-        setupNavigation()
+        setupNavigationBasedOnMode()
         observeThemeChanges()
         observeCartBadge()
     }
+    
+    private fun setupNavigationBasedOnMode() {
+        when (userModeManager.getCurrentMode()) {
+            UserMode.BUYER -> setupBuyerNavigation()
+            UserMode.SELLER -> setupSellerNavigation()
+        }
+    }
 
-    private fun setupNavigation() {
+    private fun setupBuyerNavigation() {
+        // Set buyer menu
+        binding.bottomNavigation.menu.clear()
+        binding.bottomNavigation.inflateMenu(R.menu.bottom_nav_menu)
+        
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         
-        // Connect BottomNavigationView with NavController
+        // Set buyer navigation graph
+        navController.setGraph(R.navigation.nav_graph)
+        
+        // Set default selected item to Home
+        binding.bottomNavigation.selectedItemId = R.id.nav_home
+        
+        // Connect BottomNavigationView with NavController for Buyer
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
@@ -57,7 +78,6 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_message -> {
-                    // Check authentication
                     if (!authManager.isUserLoggedIn()) {
                         navigateToLogin()
                         false
@@ -69,7 +89,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 R.id.nav_cart -> {
-                    // Check authentication
                     if (!authManager.isUserLoggedIn()) {
                         navigateToLogin()
                         false
@@ -81,7 +100,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 R.id.nav_account -> {
-                    // Check authentication
                     if (!authManager.isUserLoggedIn()) {
                         navigateToLogin()
                         false
@@ -119,7 +137,94 @@ class MainActivity : AppCompatActivity() {
                 R.id.userInformationFragment,
                 R.id.shippingAddressFragment,
                 R.id.paymentMethodsFragment,
-                R.id.categoryProductsFragment
+                R.id.categoryProductsFragment,
+                R.id.shopFragment
+            )
+            
+            if (destination.id in hideBottomNavScreens) {
+                binding.bottomNavigation.visibility = android.view.View.GONE
+            } else {
+                binding.bottomNavigation.visibility = android.view.View.VISIBLE
+            }
+        }
+    }
+    
+    private fun setupSellerNavigation() {
+        // Set seller menu
+        binding.bottomNavigation.menu.clear()
+        binding.bottomNavigation.inflateMenu(R.menu.bottom_nav_seller_menu)
+        
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        
+        // Set seller navigation graph
+        navController.setGraph(R.navigation.seller_nav_graph)
+        
+        // Set default selected item to Dashboard
+        binding.bottomNavigation.selectedItemId = R.id.nav_seller_dashboard
+        
+        // Connect BottomNavigationView with NavController for Seller
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_seller_dashboard -> {
+                    if (navController.currentDestination?.id != R.id.sellerDashboardFragment) {
+                        navController.navigate(R.id.sellerDashboardFragment)
+                    }
+                    true
+                }
+                R.id.nav_seller_products -> {
+                    if (navController.currentDestination?.id != R.id.sellerProductsFragment) {
+                        navController.navigate(R.id.sellerProductsFragment)
+                    }
+                    true
+                }
+                R.id.nav_seller_orders -> {
+                    if (navController.currentDestination?.id != R.id.sellerOrdersFragment) {
+                        navController.navigate(R.id.sellerOrdersFragment)
+                    }
+                    true
+                }
+                R.id.nav_message -> {
+                    if (!authManager.isUserLoggedIn()) {
+                        navigateToLogin()
+                        false
+                    } else {
+                        if (navController.currentDestination?.id != R.id.messageListFragment) {
+                            navController.navigate(R.id.messageListFragment)
+                        }
+                        true
+                    }
+                }
+                R.id.nav_seller_account -> {
+                    if (!authManager.isUserLoggedIn()) {
+                        navigateToLogin()
+                        false
+                    } else {
+                        if (navController.currentDestination?.id != R.id.sellerAccountFragment) {
+                            navController.navigate(R.id.sellerAccountFragment)
+                        }
+                        true
+                    }
+                }
+                else -> false
+            }
+        }
+        
+        // Update selected item when destination changes
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.sellerDashboardFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_seller_dashboard
+                R.id.sellerProductsFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_seller_products
+                R.id.sellerOrdersFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_seller_orders
+                R.id.sellerAccountFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_seller_account
+                R.id.messageListFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_message
+            }
+            
+            // Hide bottom navigation for chat and shop screens
+            val hideBottomNavScreens = setOf(
+                R.id.chatFragment,
+                R.id.shopFragment
             )
             
             if (destination.id in hideBottomNavScreens) {

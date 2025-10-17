@@ -21,6 +21,7 @@ import com.demo.pbl6_android.ui.product.adapter.ProductImageAdapter
 import com.demo.pbl6_android.ui.product.adapter.ProductSizeAdapter
 import com.demo.pbl6_android.ui.product.adapter.RelatedProductAdapter
 import com.demo.pbl6_android.ui.product.adapter.SpecificationAdapter
+import com.demo.pbl6_android.utils.navigateToShop
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.launch
 
@@ -67,6 +68,10 @@ class ProductDetailFragment : Fragment() {
             
             btnMenu.setOnClickListener {
                 // TODO: Show menu
+            }
+            
+            btnViewShop.setOnClickListener {
+                product?.let { navigateToShop(it.shopName) }
             }
             
             btnDecrease.setOnClickListener {

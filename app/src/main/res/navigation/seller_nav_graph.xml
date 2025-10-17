@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/seller_nav_graph"
+    app:startDestination="@id/sellerDashboardFragment">
+
+    <fragment
+        android:id="@+id/sellerDashboardFragment"
+        android:name="com.demo.pbl6_android.ui.seller.SellerDashboardFragment"
+        android:label="Dashboard" />
+    
+    <fragment
+        android:id="@+id/sellerProductsFragment"
+        android:name="com.demo.pbl6_android.ui.seller.SellerProductsFragment"
+        android:label="Products" />
+    
+    <fragment
+        android:id="@+id/sellerOrdersFragment"
+        android:name="com.demo.pbl6_android.ui.seller.SellerOrdersFragment"
+        android:label="Orders" />
+    
+    <fragment
+        android:id="@+id/sellerAccountFragment"
+        android:name="com.demo.pbl6_android.ui.seller.SellerAccountFragment"
+        android:label="Account" />
+    
+    <!-- Shared Message/Chat Fragments -->
+    <fragment
+        android:id="@+id/messageListFragment"
+        android:name="com.demo.pbl6_android.ui.chat.MessageListFragment"
+        android:label="Messages">
+        <action
+            android:id="@+id/action_messageListFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.demo.pbl6_android.ui.chat.ChatFragment"
+        android:label="Chat">
+        <argument
+            android:name="conversationId"
+            app:argType="string" />
+    </fragment>
+
+</navigation>
+

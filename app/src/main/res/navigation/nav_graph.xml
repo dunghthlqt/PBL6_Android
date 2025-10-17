@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_landingPageFragment_to_categoriesFragment"
             app:destination="@id/categoriesFragment" />
+        <action
+            android:id="@+id/action_landingPageFragment_to_shopFragment"
+            app:destination="@id/shopFragment" />
     </fragment>
     
     <fragment
@@ -35,6 +38,9 @@
         <action
             android:id="@+id/action_productDetailFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_productDetailFragment_to_shopFragment"
+            app:destination="@id/shopFragment" />
     </fragment>
 
     <fragment
@@ -93,6 +99,9 @@
         <action
             android:id="@+id/action_cartFragment_to_orderFragment"
             app:destination="@id/orderFragment" />
+        <action
+            android:id="@+id/action_cartFragment_to_shopFragment"
+            app:destination="@id/shopFragment" />
     </fragment>
 
     <fragment
@@ -138,6 +147,9 @@
         <action
             android:id="@+id/action_orderDetailFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_orderDetailFragment_to_shopFragment"
+            app:destination="@id/shopFragment" />
     </fragment>
 
     <!-- Message/Chat Fragments -->
@@ -157,6 +169,9 @@
         <argument
             android:name="conversationId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_chatFragment_to_shopFragment"
+            app:destination="@id/shopFragment" />
     </fragment>
 
     <!-- Categories Fragments -->
@@ -173,6 +188,9 @@
         <action
             android:id="@+id/action_categoriesFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_categoriesFragment_to_shopFragment"
+            app:destination="@id/shopFragment" />
     </fragment>
 
     <fragment
@@ -191,6 +209,26 @@
         <action
             android:id="@+id/action_categoryProductsFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_categoryProductsFragment_to_shopFragment"
+            app:destination="@id/shopFragment" />
+    </fragment>
+
+    <!-- Shop Fragment -->
+    <fragment
+        android:id="@+id/shopFragment"
+        android:name="com.demo.pbl6_android.ui.shop.ShopFragment"
+        android:label="Shop">
+        <argument
+            android:name="shopName"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_shopFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+        <action
+            android:id="@+id/action_shopFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
     </fragment>
 
 </navigation>

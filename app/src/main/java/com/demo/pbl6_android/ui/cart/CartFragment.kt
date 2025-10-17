@@ -14,6 +14,7 @@ import com.demo.pbl6_android.databinding.FragmentCartBinding
 import com.demo.pbl6_android.ui.cart.adapter.CartShopAdapter
 import com.demo.pbl6_android.ui.cart.model.CartShop
 import com.demo.pbl6_android.ui.cart.model.CartProduct
+import com.demo.pbl6_android.utils.navigateToShop
 import kotlinx.coroutines.launch
 
 class CartFragment : Fragment() {
@@ -86,7 +87,7 @@ class CartFragment : Fragment() {
                 deleteProduct(product)
             },
             onViewShop = { shop ->
-                // TODO: Navigate to shop
+                navigateToShop(shop.name)
             }
         )
         

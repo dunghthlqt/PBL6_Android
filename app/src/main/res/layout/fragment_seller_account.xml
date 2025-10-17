@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8FAFC">
 
-    <!-- ScrollView for content -->
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/scroll_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
@@ -31,7 +28,6 @@
                 android:paddingTop="48dp"
                 android:paddingBottom="24dp">
 
-                <!-- Avatar -->
                 <FrameLayout
                     android:id="@+id/avatar_container"
                     android:layout_width="64dp"
@@ -55,14 +51,13 @@
                         app:tint="@android:color/white" />
                 </FrameLayout>
 
-                <!-- Name -->
                 <TextView
-                    android:id="@+id/user_name"
+                    android:id="@+id/shop_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:text="Nguyễn Văn A"
+                    android:text="Tên cửa hàng"
                     android:textColor="#1E293B"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -70,102 +65,41 @@
                     app:layout_constraintStart_toEndOf="@+id/avatar_container"
                     app:layout_constraintTop_toTopOf="@+id/avatar_container" />
 
-                <!-- Email -->
                 <TextView
-                    android:id="@+id/user_email"
+                    android:id="@+id/shop_stats"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="nguyenvana@email.com"
+                    android:text="0 sản phẩm • 0 đơn hàng"
                     android:textColor="#64748B"
                     android:textSize="14sp"
-                    app:layout_constraintEnd_toEndOf="@+id/user_name"
-                    app:layout_constraintStart_toStartOf="@+id/user_name"
-                    app:layout_constraintTop_toBottomOf="@+id/user_name" />
-
-                <!-- Member Since -->
-                <TextView
-                    android:id="@+id/member_since"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="Thành viên từ 2023"
-                    android:textColor="#94A3B8"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="@+id/user_email"
-                    app:layout_constraintStart_toStartOf="@+id/user_email"
-                    app:layout_constraintTop_toBottomOf="@+id/user_email" />
+                    app:layout_constraintEnd_toEndOf="@+id/shop_name"
+                    app:layout_constraintStart_toStartOf="@+id/shop_name"
+                    app:layout_constraintTop_toBottomOf="@+id/shop_name" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Switch to Seller Mode Button -->
+            <!-- Switch to Buyer Mode Button -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_switch_to_seller"
+                android:id="@+id/btn_switch_to_buyer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="Chuyển sang chế độ Người bán"
+                android:text="Chuyển sang chế độ Mua hàng"
                 app:cornerRadius="8dp"
-                app:icon="@drawable/ic_store"
+                app:icon="@drawable/ic_shopping"
                 app:iconGravity="start" />
 
-            <!-- Orders Section -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
-
-                <!-- Orders Header -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="16dp"
-                    android:paddingTop="8dp"
-                    android:paddingEnd="16dp"
-                    android:paddingBottom="8dp">
-
-                    <TextView
-                        android:id="@+id/orders_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Đơn hàng của tôi"
-                        android:textColor="#1E293B"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/view_all_orders"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Xem lịch sử mua hàng"
-                        android:textColor="#4318D1"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- Order Status Grid -->
-                <include layout="@layout/item_order_status_grid" />
-
-            </LinearLayout>
-
-            <!-- Account Management Section -->
+            <!-- Shop Management Section -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="QUẢN LÝ TÀI KHOẢN"
+                android:text="QUẢN LÝ CỬA HÀNG"
                 android:textColor="#64748B"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -187,13 +121,10 @@
                     android:showDividers="middle">
 
                     <include layout="@layout/item_account_menu"
-                        android:id="@+id/menu_personal_info" />
+                        android:id="@+id/menu_shop_info" />
 
                     <include layout="@layout/item_account_menu"
-                        android:id="@+id/menu_address" />
-
-                    <include layout="@layout/item_account_menu"
-                        android:id="@+id/menu_payment" />
+                        android:id="@+id/menu_shop_settings" />
 
                 </LinearLayout>
 
@@ -227,52 +158,8 @@
                     android:orientation="vertical"
                     android:showDividers="middle">
 
-                    <include layout="@layout/item_account_menu_with_switch"
-                        android:id="@+id/menu_notification" />
-
-                    <include layout="@layout/item_account_menu_with_switch"
-                        android:id="@+id/menu_dark_mode" />
-
                     <include layout="@layout/item_account_menu"
                         android:id="@+id/menu_help" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Other Section -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="KHÁC"
-                android:textColor="#64748B"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:divider="@drawable/divider_line"
-                    android:orientation="vertical"
-                    android:showDividers="middle">
-
-                    <include layout="@layout/item_account_menu"
-                        android:id="@+id/menu_history" />
-
-                    <include layout="@layout/item_account_menu"
-                        android:id="@+id/menu_share" />
 
                 </LinearLayout>
 
@@ -283,3 +170,4 @@
     </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
