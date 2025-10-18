@@ -93,11 +93,6 @@ class ProductDetailFragment : Fragment() {
             btnBuyNow.setOnClickListener {
                 buyNow()
             }
-            
-            btnViewShop.setOnClickListener {
-                // TODO: Navigate to shop page
-                showToast("Chức năng xem shop đang phát triển")
-            }
         }
     }
     

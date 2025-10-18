@@ -1,6 +1,5 @@
 package com.demo.pbl6_android.ui.account
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.demo.pbl6_android.MainActivity
 import com.demo.pbl6_android.R
 import com.demo.pbl6_android.data.ThemePreferences
 import com.demo.pbl6_android.data.UserModeManager
@@ -260,16 +258,8 @@ class AccountFragment : Fragment() {
     
     private fun setupSwitchToSellerButton() {
         binding.btnSwitchToSeller.setOnClickListener {
-            userModeManager.switchToSeller()
-            restartActivity()
+            findNavController().navigate(R.id.action_accountFragment_to_sellerHomeFragment)
         }
-    }
-    
-    private fun restartActivity() {
-        val intent = Intent(requireContext(), MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        requireActivity().finish()
     }
 
     override fun onDestroyView() {

@@ -62,6 +62,9 @@
         <action
             android:id="@+id/action_accountFragment_to_paymentMethodsFragment"
             app:destination="@id/paymentMethodsFragment" />
+        <action
+            android:id="@+id/action_accountFragment_to_sellerHomeFragment"
+            app:destination="@id/sellerHomeFragment" />
     </fragment>
     
     <fragment
@@ -230,5 +233,42 @@
             android:id="@+id/action_shopFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
     </fragment>
+
+    <!-- Seller Fragments -->
+    <fragment
+        android:id="@+id/sellerHomeFragment"
+        android:name="com.demo.pbl6_android.ui.seller.SellerHomeFragment"
+        android:label="Shop của tôi">
+        <action
+            android:id="@+id/action_sellerHomeFragment_to_sellerOrderHistoryFragment"
+            app:destination="@id/sellerOrderHistoryFragment" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/sellerAccountFragment"
+        android:name="com.demo.pbl6_android.ui.seller.SellerAccountFragment"
+        android:label="Tài khoản Seller" />
+    
+    <fragment
+        android:id="@+id/sellerOrderHistoryFragment"
+        android:name="com.demo.pbl6_android.ui.seller.SellerOrderHistoryFragment"
+        android:label="Đơn Hàng">
+        <action
+            android:id="@+id/action_sellerOrderHistoryFragment_to_sellerOrderDetailFragment"
+            app:destination="@id/sellerOrderDetailFragment" />
+        <action
+            android:id="@+id/action_sellerOrderHistoryFragment_to_sellerCancelledOrderDetailFragment"
+            app:destination="@id/sellerCancelledOrderDetailFragment" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/sellerOrderDetailFragment"
+        android:name="com.demo.pbl6_android.ui.seller.SellerOrderDetailFragment"
+        android:label="Chi tiết đơn hàng" />
+    
+    <fragment
+        android:id="@+id/sellerCancelledOrderDetailFragment"
+        android:name="com.demo.pbl6_android.ui.seller.SellerCancelledOrderDetailFragment"
+        android:label="Chi tiết đơn hàng" />
 
 </navigation>

@@ -38,6 +38,11 @@ class UserModeManager private constructor(context: Context) {
     }
     
     fun getCurrentMode(): UserMode {
+        // Always return BUYER mode - seller mode is accessed via navigation
+        return UserMode.BUYER
+    }
+    
+    fun getStoredMode(): UserMode {
         val modeString = sharedPreferences.getString(KEY_USER_MODE, UserMode.BUYER.name)
         return try {
             UserMode.valueOf(modeString ?: UserMode.BUYER.name)
