@@ -28,17 +28,22 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_indicator"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="6dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="-30dp"
                 android:background="@android:color/transparent"
+
+                android:minHeight="0dp"
+
                 app:tabBackground="@drawable/tab_indicator_selector"
                 app:tabGravity="center"
                 app:tabIndicatorHeight="0dp"
                 app:tabMaxWidth="6dp"
                 app:tabMinWidth="6dp"
                 app:tabPaddingEnd="3dp"
-                app:tabPaddingStart="3dp" />
+                app:tabPaddingStart="3dp"
+                app:tabPaddingTop="0dp"
+                app:tabPaddingBottom="0dp"/>
 
             <!-- Product Info Section -->
             <LinearLayout

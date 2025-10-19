@@ -24,3 +24,7 @@ fun Int.formatCompactNumber(): String {
     }
 }
 
+fun Long.formatCurrency(): String {
+    return "đ" + String.format("%,d", this).replace(",", ".")
+}
+

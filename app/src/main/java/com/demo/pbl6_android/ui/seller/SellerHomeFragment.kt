@@ -25,8 +25,6 @@ class SellerHomeFragment : Fragment() {
     
     private val viewModel: SellerHomeViewModel by viewModels()
     
-    private lateinit var taskAdapter: SellerTaskAdapter
-    private lateinit var recommendationAdapter: SellerRecommendationAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,35 +38,8 @@ class SellerHomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        setupAdapters()
         setupListeners()
         observeUiState()
-    }
-
-    private fun setupAdapters() {
-        taskAdapter = SellerTaskAdapter { task ->
-            viewModel.handleEvent(SellerHomeEvent.StartTask(task.id))
-            showToast("Bắt đầu nhiệm vụ: ${task.title}")
-        }
-        
-        recommendationAdapter = SellerRecommendationAdapter { recommendation ->
-            viewModel.handleEvent(SellerHomeEvent.TryRecommendation(recommendation.id))
-            showToast("Thử: ${recommendation.title}")
-        }
-        
-        binding.rvTasks.apply {
-            layoutManager = LinearLayoutManager(
-                requireContext(),
-                LinearLayoutManager.HORIZONTAL,
-                false
-            )
-            adapter = taskAdapter
-        }
-        
-        binding.rvRecommendations.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = recommendationAdapter
-        }
     }
 
     private fun setupListeners() {
@@ -113,15 +84,15 @@ class SellerHomeFragment : Fragment() {
             }
             
             btnProducts.setOnClickListener {
-                showToast("Sản phẩm của tôi")
+                findNavController().navigate(R.id.action_sellerHomeFragment_to_sellerProductsFragment)
             }
             
             btnFinance.setOnClickListener {
-                showToast("Tài chính")
+                findNavController().navigate(R.id.action_sellerHomeFragment_to_sellerFinanceFragment)
             }
             
             btnSales.setOnClickListener {
-                showToast("Hiệu quả bán hàng")
+                findNavController().navigate(R.id.action_sellerHomeFragment_to_sellerSalesFragment)
             }
             
             btnAds.setOnClickListener {
@@ -134,10 +105,6 @@ class SellerHomeFragment : Fragment() {
             
             btnSupport.setOnClickListener {
                 showToast("Trung tâm hỗ trợ")
-            }
-            
-            tvViewMoreTasks.setOnClickListener {
-                showToast("Xem thêm nhiệm vụ")
             }
         }
     }
@@ -172,12 +139,6 @@ class SellerHomeFragment : Fragment() {
             tvCancelledCount.text = state.stats.cancelledOrders.toString()
             tvReturnCount.text = state.stats.returnOrders.toString()
             tvReviewCount.text = state.stats.reviewsToRespond.toString()
-            
-            // Update tasks
-            taskAdapter.submitList(state.tasks)
-            
-            // Update recommendations
-            recommendationAdapter.submitList(state.recommendations)
             
             // Show error message
             state.errorMessage?.let { message ->

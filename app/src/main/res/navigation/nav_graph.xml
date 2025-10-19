@@ -242,7 +242,31 @@
         <action
             android:id="@+id/action_sellerHomeFragment_to_sellerOrderHistoryFragment"
             app:destination="@id/sellerOrderHistoryFragment" />
+        <action
+            android:id="@+id/action_sellerHomeFragment_to_sellerProductsFragment"
+            app:destination="@id/sellerProductsFragment" />
+        <action
+            android:id="@+id/action_sellerHomeFragment_to_sellerFinanceFragment"
+            app:destination="@id/sellerFinanceFragment" />
+        <action
+            android:id="@+id/action_sellerHomeFragment_to_sellerSalesFragment"
+            app:destination="@id/sellerSalesFragment" />
     </fragment>
+    
+    <fragment
+        android:id="@+id/sellerProductsFragment"
+        android:name="com.demo.pbl6_android.ui.seller.SellerProductsFragment"
+        android:label="Sản Phẩm của Tôi" />
+    
+    <fragment
+        android:id="@+id/sellerFinanceFragment"
+        android:name="com.demo.pbl6_android.ui.seller.SellerFinanceFragment"
+        android:label="Tài chính" />
+    
+    <fragment
+        android:id="@+id/sellerSalesFragment"
+        android:name="com.demo.pbl6_android.ui.seller.SellerSalesFragment"
+        android:label="Hiệu quả bán hàng" />
     
     <fragment
         android:id="@+id/sellerAccountFragment"

@@ -146,7 +146,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.sellerAccountFragment,
                 R.id.sellerOrderHistoryFragment,
                 R.id.sellerOrderDetailFragment,
-                R.id.sellerCancelledOrderDetailFragment
+                R.id.sellerCancelledOrderDetailFragment,
+                R.id.sellerProductsFragment,
+                R.id.sellerFinanceFragment,
+                R.id.sellerSalesFragment
             )
             
             if (destination.id in hideBottomNavScreens) {
