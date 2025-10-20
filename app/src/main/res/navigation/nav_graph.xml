@@ -20,6 +20,31 @@
         <action
             android:id="@+id/action_landingPageFragment_to_shopFragment"
             app:destination="@id/shopFragment" />
+        <action
+            android:id="@+id/action_landingPageFragment_to_searchInputFragment"
+            app:destination="@id/searchInputFragment" />
+    </fragment>
+    
+    <!-- Search Fragments -->
+    <fragment
+        android:id="@+id/searchInputFragment"
+        android:name="com.demo.pbl6_android.ui.search.SearchInputFragment"
+        android:label="Tìm kiếm">
+        <action
+            android:id="@+id/action_searchInputFragment_to_searchResultsFragment"
+            app:destination="@id/searchResultsFragment" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/searchResultsFragment"
+        android:name="com.demo.pbl6_android.ui.search.SearchResultsFragment"
+        android:label="Kết quả tìm kiếm">
+        <argument
+            android:name="searchQuery"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_searchResultsFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
     </fragment>
     
     <fragment
@@ -41,6 +66,19 @@
         <action
             android:id="@+id/action_productDetailFragment_to_shopFragment"
             app:destination="@id/shopFragment" />
+        <action
+            android:id="@+id/action_productDetailFragment_to_productReviewsFragment"
+            app:destination="@id/productReviewsFragment" />
+    </fragment>
+    
+    <!-- Product Reviews Fragment -->
+    <fragment
+        android:id="@+id/productReviewsFragment"
+        android:name="com.demo.pbl6_android.ui.review.ProductReviewsFragment"
+        android:label="Đánh giá sản phẩm">
+        <argument
+            android:name="productId"
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -175,6 +213,19 @@
         <action
             android:id="@+id/action_chatFragment_to_shopFragment"
             app:destination="@id/shopFragment" />
+    </fragment>
+
+    <!-- Notification Fragment -->
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.demo.pbl6_android.ui.notification.NotificationFragment"
+        android:label="Thông báo">
+        <action
+            android:id="@+id/action_notificationFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_notificationFragment_to_messageListFragment"
+            app:destination="@id/messageListFragment" />
     </fragment>
 
     <!-- Categories Fragments -->

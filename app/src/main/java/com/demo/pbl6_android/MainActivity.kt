@@ -74,9 +74,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     true
                 }
-                R.id.nav_category -> {
-                    if (navController.currentDestination?.id != R.id.categoriesFragment) {
-                        navController.navigate(R.id.categoriesFragment)
+                R.id.nav_notification -> {
+                    if (navController.currentDestination?.id != R.id.notificationFragment) {
+                        navController.navigate(R.id.notificationFragment)
                     }
                     true
                 }
@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.landingPageFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_home
-                R.id.categoriesFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_category
+                R.id.notificationFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_notification
                 R.id.accountFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_account
                 R.id.cartFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_cart
                 R.id.messageListFragment -> binding.bottomNavigation.selectedItemId = R.id.nav_message
@@ -149,7 +149,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.sellerCancelledOrderDetailFragment,
                 R.id.sellerProductsFragment,
                 R.id.sellerFinanceFragment,
-                R.id.sellerSalesFragment
+                R.id.sellerSalesFragment,
+                R.id.searchInputFragment,
+                R.id.searchResultsFragment,
+                R.id.productReviewsFragment
             )
             
             if (destination.id in hideBottomNavScreens) {

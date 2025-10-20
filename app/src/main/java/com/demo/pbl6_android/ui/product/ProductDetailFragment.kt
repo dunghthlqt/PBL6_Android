@@ -93,6 +93,22 @@ class ProductDetailFragment : Fragment() {
             btnBuyNow.setOnClickListener {
                 buyNow()
             }
+            
+            llReviewsSection.setOnClickListener {
+                navigateToReviews()
+            }
+        }
+    }
+    
+    private fun navigateToReviews() {
+        product?.let {
+            val bundle = Bundle().apply {
+                putString("productId", it.id)
+            }
+            findNavController().navigate(
+                R.id.action_productDetailFragment_to_productReviewsFragment,
+                bundle
+            )
         }
     }
     
@@ -144,6 +160,21 @@ class ProductDetailFragment : Fragment() {
             setupColorSelection(product.colors)
             setupSizeSelection(product.sizes)
             setupSpecifications(product)
+            setupReviewSection(product.id)
+        }
+    }
+    
+    private fun setupReviewSection(productId: String) {
+        val averageRating = com.demo.pbl6_android.data.ReviewRepository.getAverageRating(productId)
+        val totalReviews = com.demo.pbl6_android.data.ReviewRepository.getTotalReviewsCount(productId)
+        
+        binding.apply {
+            tvRatingNumber.text = String.format("%.1f", averageRating)
+            tvReviewSummary.text = "${"%.1f".format(averageRating)} ($totalReviews)"
+            
+            val fullStars = averageRating.toInt()
+            val stars = "★".repeat(fullStars) + "☆".repeat(5 - fullStars)
+            tvRatingStars.text = stars
         }
     }
     

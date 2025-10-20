@@ -26,4 +26,7 @@
     
     <!-- Rating Color -->
     <color name="rating_color">#F59E0B</color>
+    
+    <!-- Divider -->
+    <color name="divider">#E2E8F0</color>
 </resources>

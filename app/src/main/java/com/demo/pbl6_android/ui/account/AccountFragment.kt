@@ -124,7 +124,7 @@ class AccountFragment : Fragment() {
         setupOrderStatus(
             R.id.status_pending_confirmation,
             R.drawable.ic_order_payment,
-            "Chờ thanh toán"
+            "Chờ xác nhận"
         ) {
             navigateToOrderHistory(0)
         }
@@ -147,15 +147,6 @@ class AccountFragment : Fragment() {
             navigateToOrderHistory(2)
         }
         
-        // Return/Refund - Tab 4
-        setupOrderStatus(
-            R.id.status_return_refund,
-            R.drawable.ic_order_return,
-            "Trả hàng/Hoàn tiền"
-        ) {
-            navigateToOrderHistory(4)
-        }
-        
         // Review (Delivered) - Tab 3
         setupOrderStatus(
             R.id.status_review,
@@ -164,6 +155,9 @@ class AccountFragment : Fragment() {
         ) {
             navigateToOrderHistory(3)
         }
+        
+        // Return/Refund button removed from layout but can be accessed via order history
+        // navigateToOrderHistory(4) for Return/Refund tab
     }
     
     private fun setupOrderStatus(

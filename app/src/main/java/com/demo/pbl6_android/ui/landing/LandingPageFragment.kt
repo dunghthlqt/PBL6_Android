@@ -36,12 +36,8 @@ class LandingPageFragment : Fragment() {
     }
 
     private fun setupViews() {
-        binding.searchEditText.setOnClickListener {
-            // TODO: Navigate to search screen
-        }
-        
-        binding.searchButton.setOnClickListener {
-            // TODO: Navigate to search results
+        binding.searchContainer.setOnClickListener {
+            findNavController().navigate(R.id.action_landingPageFragment_to_searchInputFragment)
         }
     }
     
