@@ -158,6 +158,46 @@
         <action
             android:id="@+id/action_orderFragment_to_shippingMethodFragment"
             app:destination="@id/shippingMethodFragment" />
+        <action
+            android:id="@+id/action_orderFragment_to_addressSelectionFragment"
+            app:destination="@id/addressSelectionFragment" />
+        <action
+            android:id="@+id/action_orderFragment_to_orderStatusFragment"
+            app:destination="@id/orderStatusFragment" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/addressSelectionFragment"
+        android:name="com.demo.pbl6_android.ui.address.AddressSelectionFragment"
+        android:label="Address Selection">
+        <action
+            android:id="@+id/action_addressSelectionFragment_to_addressFormFragment"
+            app:destination="@id/addressFormFragment" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/addressFormFragment"
+        android:name="com.demo.pbl6_android.ui.address.AddressFormFragment"
+        android:label="Address Form">
+        <argument
+            android:name="addressId"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/orderStatusFragment"
+        android:name="com.demo.pbl6_android.ui.order.OrderStatusFragment"
+        android:label="Order Status">
+        <argument
+            android:name="paymentMethod"
+            app:argType="string" />
+        <argument
+            android:name="orderId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_orderStatusFragment_to_orderHistoryFragment"
+            app:destination="@id/orderHistoryFragment" />
     </fragment>
 
     <fragment

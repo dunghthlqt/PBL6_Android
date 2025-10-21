@@ -53,14 +53,11 @@ class ShippingAddressFragment : Fragment() {
     private fun setupRecyclerView() {
         addressAdapter = AddressAdapter(
             addresses = addresses,
-            onSetDefaultClick = { address ->
+            onAddressSelected = { address ->
                 setDefaultAddress(address)
             },
-            onEditClick = { address ->
+            onEditAddress = { address ->
                 showToast("Chức năng chỉnh sửa địa chỉ đang phát triển")
-            },
-            onDeleteClick = { address ->
-                deleteAddress(address)
             }
         )
 
@@ -81,7 +78,7 @@ class ShippingAddressFragment : Fragment() {
                     province = "TP. Hồ Chí Minh",
                     district = "Quận 1",
                     ward = "Phường Bến Nghé",
-                    detailAddress = "123 Đường Lê Lợi",
+                    street = "123 Đường Lê Lợi",
                     isDefault = true
                 ),
                 Address(
@@ -91,7 +88,7 @@ class ShippingAddressFragment : Fragment() {
                     province = "TP. Hồ Chí Minh",
                     district = "Quận 3",
                     ward = "Phường 7",
-                    detailAddress = "456 Đường Cách Mạng Tháng 8",
+                    street = "456 Đường Cách Mạng Tháng 8",
                     isDefault = false
                 ),
                 Address(
@@ -101,7 +98,7 @@ class ShippingAddressFragment : Fragment() {
                     province = "Hà Nội",
                     district = "Quận Hoàn Kiếm",
                     ward = "Phường Hàng Bạc",
-                    detailAddress = "789 Phố Hàng Gai",
+                    street = "789 Phố Hàng Gai",
                     isDefault = false
                 )
             )

@@ -270,47 +270,115 @@
                 app:cardCornerRadius="12dp"
                 app:cardElevation="1dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:padding="16dp">
 
-                    <ImageView
-                        android:id="@+id/iv_platform_voucher_icon"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_voucher"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="#F59E0B" />
-
-                    <TextView
-                        android:id="@+id/tv_platform_voucher_label"
-                        android:layout_width="wrap_content"
+                    <!-- Shipping Voucher Row -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layout_shipping_voucher"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="Voucher của sàn"
-                        android:textColor="#000000"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/iv_platform_voucher_icon"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp">
 
-                    <TextView
-                        android:id="@+id/tv_select_platform_voucher"
-                        android:layout_width="wrap_content"
+                        <ImageView
+                            android:id="@+id/iv_shipping_voucher_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_voucher"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="#4CAF50" />
+
+                        <TextView
+                            android:id="@+id/tv_shipping_voucher_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="Ưu đãi phí vận chuyển"
+                            android:textColor="#000000"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/iv_shipping_voucher_icon"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_select_shipping_voucher"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Chọn mã"
+                            android:textColor="#4318D1"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="#E2E8F0" />
+
+                    <!-- Discount Voucher Row -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layout_discount_voucher"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Chọn mã"
-                        android:textColor="#4318D1"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp">
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        <ImageView
+                            android:id="@+id/iv_discount_voucher_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_voucher"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="#9C27B0" />
+
+                        <TextView
+                            android:id="@+id/tv_discount_voucher_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="Mã giảm giá"
+                            android:textColor="#000000"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/iv_discount_voucher_icon"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_select_discount_voucher"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Chọn mã"
+                            android:textColor="#4318D1"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
@@ -371,7 +439,7 @@
                             android:id="@+id/rb_cod"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:button="@drawable/radio_button_selector"
+                            android:button="@drawable/radio_button_custom"
                             android:minWidth="0dp"
                             android:minHeight="0dp"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -418,7 +486,7 @@
                             android:id="@+id/rb_bank_transfer"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:button="@drawable/radio_button_selector"
+                            android:button="@drawable/radio_button_custom"
                             android:checked="true"
                             android:minWidth="0dp"
                             android:minHeight="0dp"
@@ -532,6 +600,68 @@
                             android:layout_height="wrap_content"
                             android:text="30,000đ"
                             android:textColor="#000000"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- Shipping Discount -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layout_shipping_discount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tv_shipping_discount_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Giảm giá phí vận chuyển"
+                            android:textColor="#64748B"
+                            android:textSize="14sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_shipping_discount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-30,000đ"
+                            android:textColor="#4CAF50"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- Product Discount -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layout_product_discount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tv_product_discount_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tổng cộng voucher giảm giá"
+                            android:textColor="#64748B"
+                            android:textSize="14sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_product_discount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-50,000đ"
+                            android:textColor="#9C27B0"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="parent"

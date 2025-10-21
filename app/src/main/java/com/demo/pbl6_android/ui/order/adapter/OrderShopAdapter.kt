@@ -14,6 +14,8 @@ class OrderShopAdapter(
     private val onAddShopNote: (OrderShop) -> Unit
 ) : RecyclerView.Adapter<OrderShopAdapter.ShopViewHolder>() {
 
+    private var selectedShopVoucher: com.demo.pbl6_android.data.model.Voucher? = null
+
     inner class ShopViewHolder(
         private val binding: ItemOrderShopBinding
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -37,7 +39,36 @@ class OrderShopAdapter(
                 }
 
                 updateNoteDisplay(shop)
+                updateVoucherDisplay()
             }
+        }
+        
+        private fun updateVoucherDisplay() {
+            binding.apply {
+                if (selectedShopVoucher != null) {
+                    // Calculate product total for this shop
+                    var productTotal = 0
+                    shops.forEach { shop ->
+                        shop.products.forEach { product ->
+                            productTotal += product.currentPrice * product.quantity
+                        }
+                    }
+                    
+                    val discount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(
+                        productTotal,
+                        selectedShopVoucher
+                    )
+                    tvSelectShopVoucher.text = "-${formatPrice(discount)}"
+                    tvSelectShopVoucher.setTextColor(android.graphics.Color.parseColor("#F59E0B"))
+                } else {
+                    tvSelectShopVoucher.text = "Chọn mã"
+                    tvSelectShopVoucher.setTextColor(android.graphics.Color.parseColor("#4318D1"))
+                }
+            }
+        }
+        
+        private fun formatPrice(price: Int): String {
+            return "%,dđ".format(price).replace(",", ".")
         }
 
         private fun updateNoteDisplay(shop: OrderShop) {
@@ -58,6 +89,11 @@ class OrderShopAdapter(
 
     fun updateShopNote(shopId: String, note: String) {
         shops.find { it.shopId == shopId }?.noteToShop = note
+        notifyDataSetChanged()
+    }
+    
+    fun updateShopVoucher(voucher: com.demo.pbl6_android.data.model.Voucher?) {
+        selectedShopVoucher = voucher
         notifyDataSetChanged()
     }
 

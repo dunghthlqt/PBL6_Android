@@ -3,24 +3,22 @@ package com.demo.pbl6_android.ui.address.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.demo.pbl6_android.R
 import com.demo.pbl6_android.data.model.Address
-import com.demo.pbl6_android.databinding.ItemAddressBinding
+import com.google.android.material.button.MaterialButton
 
 class AddressAdapter(
     private val addresses: List<Address>,
-    private val onSetDefaultClick: (Address) -> Unit,
-    private val onEditClick: (Address) -> Unit,
-    private val onDeleteClick: (Address) -> Unit
+    private val onAddressSelected: (Address) -> Unit,
+    private val onEditAddress: (Address) -> Unit
 ) : RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddressViewHolder {
-        val binding = ItemAddressBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return AddressViewHolder(binding)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_address, parent, false)
+        return AddressViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: AddressViewHolder, position: Int) {
@@ -29,38 +27,26 @@ class AddressAdapter(
 
     override fun getItemCount(): Int = addresses.size
 
-    inner class AddressViewHolder(
-        private val binding: ItemAddressBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    inner class AddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val tvRecipientName: TextView = itemView.findViewById(R.id.tv_recipient_name)
+        private val tvPhoneNumber: TextView = itemView.findViewById(R.id.tv_phone_number)
+        private val tvFullAddress: TextView = itemView.findViewById(R.id.tv_full_address)
+        private val tvDefaultBadge: TextView = itemView.findViewById(R.id.tv_default_badge)
+        private val btnEdit: MaterialButton = itemView.findViewById(R.id.btn_edit)
 
         fun bind(address: Address) {
-            binding.apply {
-                // Show/hide default badge
-                tvDefaultBadge.visibility = if (address.isDefault) View.VISIBLE else View.GONE
-                
-                // Set recipient info
-                tvRecipientInfo.text = "${address.recipientName} | ${address.phoneNumber}"
-                
-                // Set full address
-                tvFullAddress.text = address.fullAddress
-                
-                // Show/hide set default button
-                btnSetDefault.visibility = if (!address.isDefault) View.VISIBLE else View.GONE
-                
-                // Set click listeners
-                btnSetDefault.setOnClickListener {
-                    onSetDefaultClick(address)
-                }
-                
-                btnEdit.setOnClickListener {
-                    onEditClick(address)
-                }
-                
-                btnDelete.setOnClickListener {
-                    onDeleteClick(address)
-                }
+            tvRecipientName.text = address.recipientName
+            tvPhoneNumber.text = address.phoneNumber
+            tvFullAddress.text = address.fullAddress
+            tvDefaultBadge.visibility = if (address.isDefault) View.VISIBLE else View.GONE
+
+            itemView.setOnClickListener {
+                onAddressSelected(address)
+            }
+
+            btnEdit.setOnClickListener {
+                onEditAddress(address)
             }
         }
     }
 }
-

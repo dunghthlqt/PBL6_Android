@@ -59,7 +59,7 @@ class ProductDetailFragment : Fragment() {
             }
             
             btnShare.setOnClickListener {
-                showShareDialog()
+                copyProductLinkToClipboard()
             }
             
             btnCart.setOnClickListener {
@@ -67,7 +67,7 @@ class ProductDetailFragment : Fragment() {
             }
             
             btnMenu.setOnClickListener {
-                // TODO: Show menu
+                showMenuDialog()
             }
             
             btnViewShop.setOnClickListener {
@@ -97,6 +97,10 @@ class ProductDetailFragment : Fragment() {
             llReviewsSection.setOnClickListener {
                 navigateToReviews()
             }
+            
+            llProductDetails.setOnClickListener {
+                showProductDetailsBottomSheet()
+            }
         }
     }
     
@@ -112,24 +116,30 @@ class ProductDetailFragment : Fragment() {
         }
     }
     
-    private fun showShareDialog() {
-        val options = arrayOf("Copy link sản phẩm")
-        
-        android.app.AlertDialog.Builder(requireContext())
-            .setTitle("Chia sẻ sản phẩm")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> copyProductLink()
-                }
-            }
-            .show()
-    }
-    
-    private fun copyProductLink() {
+    private fun copyProductLinkToClipboard() {
         val clipboard = requireContext().getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
         val clip = android.content.ClipData.newPlainText("Product Link", "https://example.com/product/${product?.id}")
         clipboard.setPrimaryClip(clip)
-        showToast("Đã copy link sản phẩm")
+        com.demo.pbl6_android.ui.common.CustomToast.show(requireContext(), "Đã sao chép đường dẫn vào bộ nhớ")
+    }
+    
+    private fun showMenuDialog() {
+        val popup = androidx.appcompat.widget.PopupMenu(requireContext(), binding.btnMenu)
+        popup.menuInflater.inflate(R.menu.menu_product_detail, popup.menu)
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_go_home -> {
+                    navigateToHome()
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
+    }
+    
+    private fun navigateToHome() {
+        findNavController().navigate(R.id.landingPageFragment)
     }
     
     private fun loadProduct() {
@@ -220,20 +230,40 @@ class ProductDetailFragment : Fragment() {
     }
     
     private fun setupSpecifications(product: Product) {
-        val specs = mutableListOf<Pair<String, String>>()
-        specs.add(Pair("Thương hiệu:", product.brand))
-        specs.add(Pair("Chất liệu:", product.material))
-        specs.add(Pair("Xuất xứ:", product.origin))
+        // Specifications will be shown in bottom sheet
+        // Nothing to do here
+    }
+    
+    private fun showProductDetailsBottomSheet() {
+        val currentProduct = product ?: return
         
-        product.specifications.forEach { (key, value) ->
+        val bottomSheetDialog = com.google.android.material.bottomsheet.BottomSheetDialog(requireContext())
+        val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet_product_details, null)
+        bottomSheetDialog.setContentView(bottomSheetView)
+        
+        val rvSpecifications = bottomSheetView.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.rv_specifications)
+        val btnAgree = bottomSheetView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_agree)
+        
+        val specs = mutableListOf<Pair<String, String>>()
+        specs.add(Pair("Thương hiệu:", currentProduct.brand))
+        specs.add(Pair("Chất liệu:", currentProduct.material))
+        specs.add(Pair("Xuất xứ:", currentProduct.origin))
+        
+        currentProduct.specifications.forEach { (key, value) ->
             specs.add(Pair("$key:", value))
         }
         
         val specAdapter = SpecificationAdapter(specs)
-        binding.rvSpecifications.apply {
+        rvSpecifications.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = specAdapter
         }
+        
+        btnAgree.setOnClickListener {
+            bottomSheetDialog.dismiss()
+        }
+        
+        bottomSheetDialog.show()
     }
     
     private fun loadRelatedProducts(currentProductId: String) {
@@ -268,7 +298,7 @@ class ProductDetailFragment : Fragment() {
         val selectedSize = sizeAdapter?.getSelectedSize() ?: "Default"
         
         CartManager.addToCart(currentProduct, selectedColor, selectedSize, quantity)
-        showToast("Đã thêm vào giỏ hàng")
+        com.demo.pbl6_android.ui.common.CustomToast.show(requireContext(), "Đã thêm vào giỏ hàng")
     }
     
     private fun buyNow() {

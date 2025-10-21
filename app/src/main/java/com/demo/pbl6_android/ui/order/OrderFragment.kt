@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.demo.pbl6_android.R
@@ -16,6 +17,7 @@ import com.demo.pbl6_android.ui.order.model.PaymentMethod
 import com.demo.pbl6_android.ui.order.model.ShippingAddress
 import com.demo.pbl6_android.ui.order.model.ShippingMethod
 import com.demo.pbl6_android.ui.shipping.ShippingMethodData
+import kotlinx.coroutines.launch
 
 class OrderFragment : Fragment() {
 
@@ -29,6 +31,9 @@ class OrderFragment : Fragment() {
     private var shippingAddress: ShippingAddress? = null
     private var selectedShippingMethod: ShippingMethod? = null
     private var selectedPaymentMethod: PaymentMethod = PaymentMethod.BANK_TRANSFER
+    private var selectedShopVoucher: com.demo.pbl6_android.data.model.Voucher? = null
+    private var selectedPlatformShippingVoucher: com.demo.pbl6_android.data.model.Voucher? = null
+    private var selectedPlatformDiscountVoucher: com.demo.pbl6_android.data.model.Voucher? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,16 +50,94 @@ class OrderFragment : Fragment() {
         setupRecyclerView()
         loadSampleData()
         setupPaymentMethods()
+        observeVouchers()
         calculateTotals()
     }
 
     override fun onResume() {
         super.onResume()
+        // Reload data to fix disappearing items bug
+        loadSampleData()
+        
         // Update shipping method if changed
         ShippingMethodData.selectedMethod?.let { method ->
             selectedShippingMethod = method
             displayShippingMethod(method)
             calculateTotals()
+        }
+        
+        // Update voucher displays
+        updateVoucherDisplays()
+    }
+    
+    private fun observeVouchers() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            com.demo.pbl6_android.data.VoucherManager.selectedShopVoucher.collect { voucher ->
+                selectedShopVoucher = voucher
+                updateVoucherDisplays()
+                calculateTotals()
+            }
+        }
+        
+        viewLifecycleOwner.lifecycleScope.launch {
+            com.demo.pbl6_android.data.VoucherManager.selectedPlatformShippingVoucher.collect { voucher ->
+                selectedPlatformShippingVoucher = voucher
+                updateVoucherDisplays()
+                calculateTotals()
+            }
+        }
+        
+        viewLifecycleOwner.lifecycleScope.launch {
+            com.demo.pbl6_android.data.VoucherManager.selectedPlatformDiscountVoucher.collect { voucher ->
+                selectedPlatformDiscountVoucher = voucher
+                updateVoucherDisplays()
+                calculateTotals()
+            }
+        }
+    }
+    
+    private fun updateVoucherDisplays() {
+        binding.apply {
+            // Update shipping voucher display
+            if (selectedPlatformShippingVoucher != null) {
+                val discount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(
+                    selectedShippingMethod?.price ?: 0, 
+                    selectedPlatformShippingVoucher
+                )
+                if (discount >= (selectedShippingMethod?.price ?: 0)) {
+                    tvSelectShippingVoucher.text = "Miễn Phí Vận Chuyển"
+                } else {
+                    tvSelectShippingVoucher.text = "-${formatPrice(discount)}"
+                }
+                tvSelectShippingVoucher.setTextColor(android.graphics.Color.parseColor("#4CAF50"))
+            } else {
+                tvSelectShippingVoucher.text = "Chọn mã"
+                tvSelectShippingVoucher.setTextColor(android.graphics.Color.parseColor("#4318D1"))
+            }
+            
+            // Update discount voucher display
+            if (selectedPlatformDiscountVoucher != null) {
+                var productTotal = 0
+                orderShops.forEach { shop ->
+                    shop.products.forEach { product ->
+                        productTotal += product.currentPrice * product.quantity
+                    }
+                }
+                val discount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(
+                    productTotal, 
+                    selectedPlatformDiscountVoucher
+                )
+                tvSelectDiscountVoucher.text = "-${formatPrice(discount)}"
+                tvSelectDiscountVoucher.setTextColor(android.graphics.Color.parseColor("#9C27B0"))
+            } else {
+                tvSelectDiscountVoucher.text = "Chọn mã"
+                tvSelectDiscountVoucher.setTextColor(android.graphics.Color.parseColor("#4318D1"))
+            }
+            
+            // Update shop voucher display in adapter
+            if (::orderShopAdapter.isInitialized) {
+                orderShopAdapter.updateShopVoucher(selectedShopVoucher)
+            }
         }
     }
 
@@ -65,14 +148,18 @@ class OrderFragment : Fragment() {
             }
 
             tvChangeAddress.setOnClickListener {
-                // TODO: Navigate to address selection
+                findNavController().navigate(R.id.action_orderFragment_to_addressSelectionFragment)
             }
 
             tvViewAllShipping.setOnClickListener {
                 findNavController().navigate(R.id.action_orderFragment_to_shippingMethodFragment)
             }
 
-            tvSelectPlatformVoucher.setOnClickListener {
+            layoutShippingVoucher.setOnClickListener {
+                findNavController().navigate(R.id.action_orderFragment_to_platformVoucherFragment)
+            }
+            
+            layoutDiscountVoucher.setOnClickListener {
                 findNavController().navigate(R.id.action_orderFragment_to_platformVoucherFragment)
             }
 
@@ -260,12 +347,62 @@ class OrderFragment : Fragment() {
             }
         }
 
-        val shippingTotal = selectedShippingMethod?.price ?: 0
-        val grandTotal = productTotal + shippingTotal
-
+        val originalShippingTotal = selectedShippingMethod?.price ?: 0
+        var shippingTotal = originalShippingTotal
+        
+        // Apply platform shipping voucher
+        val shippingDiscount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(
+            originalShippingTotal, 
+            selectedPlatformShippingVoucher
+        )
+        shippingTotal -= shippingDiscount
+        if (shippingTotal < 0) shippingTotal = 0
+        
+        // Apply platform discount voucher
+        val platformProductDiscount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(
+            productTotal, 
+            selectedPlatformDiscountVoucher
+        )
+        
+        // Apply shop voucher
+        val shopDiscount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(
+            productTotal, 
+            selectedShopVoucher
+        )
+        
+        // Calculate totals
+        val totalProductDiscount = platformProductDiscount + shopDiscount
+        val grandTotal = productTotal + shippingTotal - totalProductDiscount
+        
         binding.apply {
             tvProductTotal.text = formatPrice(productTotal)
-            tvShippingTotal.text = formatPrice(shippingTotal)
+            
+            // Show shipping with strikethrough if discounted
+            if (shippingDiscount > 0 && shippingTotal < originalShippingTotal) {
+                tvShippingTotal.text = android.text.Html.fromHtml(
+                    "<strike>${formatPrice(originalShippingTotal)}</strike> ${formatPrice(shippingTotal)}",
+                    android.text.Html.FROM_HTML_MODE_LEGACY
+                )
+            } else {
+                tvShippingTotal.text = formatPrice(originalShippingTotal)
+            }
+            
+            // Show shipping discount row
+            if (shippingDiscount > 0) {
+                layoutShippingDiscount.visibility = View.VISIBLE
+                tvShippingDiscount.text = "-${formatPrice(shippingDiscount)}"
+            } else {
+                layoutShippingDiscount.visibility = View.GONE
+            }
+            
+            // Show product discount row
+            if (totalProductDiscount > 0) {
+                layoutProductDiscount.visibility = View.VISIBLE
+                tvProductDiscount.text = "-${formatPrice(totalProductDiscount)}"
+            } else {
+                layoutProductDiscount.visibility = View.GONE
+            }
+            
             tvGrandTotal.text = formatPrice(grandTotal)
             tvBottomGrandTotal.text = formatPrice(grandTotal)
         }
@@ -276,30 +413,110 @@ class OrderFragment : Fragment() {
     }
 
     private fun placeOrder() {
-        // TODO: Validate order data
         if (shippingAddress == null) {
-            // Show error: Please select shipping address
+            android.widget.Toast.makeText(requireContext(), "Vui lòng chọn địa chỉ giao hàng", android.widget.Toast.LENGTH_SHORT).show()
             return
         }
 
         if (selectedShippingMethod == null) {
-            // Show error: Please select shipping method
+            android.widget.Toast.makeText(requireContext(), "Vui lòng chọn phương thức vận chuyển", android.widget.Toast.LENGTH_SHORT).show()
             return
         }
 
         if (orderShops.isEmpty()) {
-            // Show error: Cart is empty
+            android.widget.Toast.makeText(requireContext(), "Giỏ hàng trống", android.widget.Toast.LENGTH_SHORT).show()
             return
         }
 
-        // TODO: Create order object and send to backend
-        // TODO: Navigate to order success screen
+        val orderId = generateOrderId()
+        val paymentMethodString = when (selectedPaymentMethod) {
+            PaymentMethod.CASH_ON_DELIVERY -> "CASH_ON_DELIVERY"
+            PaymentMethod.BANK_TRANSFER -> "BANK_TRANSFER"
+        }
+        
+        // Calculate totals
+        var productTotal = 0
+        orderShops.forEach { shop ->
+            shop.products.forEach { product ->
+                productTotal += product.currentPrice * product.quantity
+            }
+        }
+        
+        var shippingTotal = selectedShippingMethod?.price ?: 0
+        val originalShippingTotal = shippingTotal
+        
+        // Apply discounts
+        val platformDiscount = if (selectedPlatformVoucher != null) {
+            val isShippingVoucher = selectedPlatformVoucher!!.code.contains("SHIP", ignoreCase = true) || 
+                                    selectedPlatformVoucher!!.title.contains("vận chuyển", ignoreCase = true)
+            
+            if (isShippingVoucher) {
+                val discount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(shippingTotal, selectedPlatformVoucher)
+                shippingTotal -= discount
+                if (shippingTotal < 0) shippingTotal = 0
+                discount
+            } else {
+                com.demo.pbl6_android.data.VoucherManager.calculateDiscount(productTotal, selectedPlatformVoucher)
+            }
+        } else {
+            0
+        }
+        
+        val shopDiscount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(productTotal, selectedShopVoucher)
+        val totalDiscount = platformDiscount + shopDiscount
+        val grandTotal = productTotal + shippingTotal - totalDiscount
+
+        // Create order object
+        val firstShop = orderShops.firstOrNull()
+        val order = com.demo.pbl6_android.data.model.Order(
+            orderId = orderId,
+            orderCode = orderId,
+            orderDate = System.currentTimeMillis(),
+            status = if (selectedPaymentMethod == PaymentMethod.CASH_ON_DELIVERY) 
+                        com.demo.pbl6_android.data.model.OrderStatus.PENDING_PICKUP 
+                     else 
+                        com.demo.pbl6_android.data.model.OrderStatus.PENDING_PICKUP,
+            items = orderShops.flatMap { shop ->
+                shop.products.map { product ->
+                    com.demo.pbl6_android.data.model.OrderItem(
+                        productId = product.id,
+                        productName = product.name,
+                        productImage = product.imageUrl,
+                        color = product.color,
+                        size = product.size,
+                        price = product.currentPrice,
+                        quantity = product.quantity
+                    )
+                }
+            },
+            totalAmount = grandTotal,
+            shopId = firstShop?.shopId ?: "",
+            shopName = firstShop?.shopName ?: "",
+            shippingAddress = shippingAddress!!.fullAddress,
+            paymentMethod = if (selectedPaymentMethod == PaymentMethod.CASH_ON_DELIVERY) "Thanh toán khi nhận hàng" else "Chuyển khoản ngân hàng"
+        )
+        
+        // Save order to history
+        com.demo.pbl6_android.data.OrderHistoryManager.addOrder(order)
+
+        val bundle = Bundle().apply {
+            putString("paymentMethod", paymentMethodString)
+            putString("orderId", orderId)
+        }
+
+        findNavController().navigate(R.id.action_orderFragment_to_orderStatusFragment, bundle)
+    }
+
+    private fun generateOrderId(): String {
+        return "ORDER${System.currentTimeMillis().toString().takeLast(8)}"
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        OrderData.clearOrderData()
-        ShippingMethodData.selectedMethod = null
+        // Don't clear order data here to prevent data loss when navigating
+        // OrderData.clearOrderData()
+        // Don't clear shipping method to maintain selection
+        // ShippingMethodData.selectedMethod = null
         _binding = null
     }
 }

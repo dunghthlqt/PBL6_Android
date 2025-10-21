@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="1dp">
+    app:cardElevation="1dp"
+    app:strokeWidth="0dp"
+    app:strokeColor="@color/primary">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_shipping_method"
@@ -20,7 +22,7 @@
             android:id="@+id/rb_shipping_method"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:button="@drawable/radio_button_selector"
+            android:button="@drawable/radio_button_custom"
             android:minWidth="0dp"
             android:minHeight="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -69,5 +71,5 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
 

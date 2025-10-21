@@ -7,10 +7,9 @@ data class Address(
     val province: String,
     val district: String,
     val ward: String,
-    val detailAddress: String,
+    val street: String,
     val isDefault: Boolean = false
 ) {
     val fullAddress: String
-        get() = "$detailAddress, $ward, $district, $province"
+        get() = "$street, $ward, $district, $province"
 }
-

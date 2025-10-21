@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.demo.pbl6_android.R
 import com.demo.pbl6_android.databinding.ItemShippingMethodBinding
 import com.demo.pbl6_android.ui.order.model.ShippingMethod
+import com.google.android.material.card.MaterialCardView
 
 class ShippingMethodAdapter(
     private val methods: List<ShippingMethod>,
@@ -27,12 +28,16 @@ class ShippingMethodAdapter(
                 
                 rbShippingMethod.isChecked = isSelected
                 
-                val backgroundColor = if (isSelected) {
-                    ContextCompat.getColor(root.context, R.color.product_selected_bg)
+                // Highlight selected with border
+                val cardView = root as MaterialCardView
+                if (isSelected) {
+                    cardView.setCardBackgroundColor(ContextCompat.getColor(root.context, R.color.product_selected_bg))
+                    cardView.strokeWidth = 4
+                    cardView.strokeColor = ContextCompat.getColor(root.context, R.color.primary)
                 } else {
-                    ContextCompat.getColor(root.context, android.R.color.white)
+                    cardView.setCardBackgroundColor(ContextCompat.getColor(root.context, android.R.color.white))
+                    cardView.strokeWidth = 0
                 }
-                layoutShippingMethod.setBackgroundColor(backgroundColor)
                 
                 root.setOnClickListener {
                     selectMethod(adapterPosition)

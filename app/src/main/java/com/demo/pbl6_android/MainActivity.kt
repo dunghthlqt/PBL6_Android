@@ -152,7 +152,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.sellerSalesFragment,
                 R.id.searchInputFragment,
                 R.id.searchResultsFragment,
-                R.id.productReviewsFragment
+                R.id.productReviewsFragment,
+                R.id.addressSelectionFragment,
+                R.id.addressFormFragment,
+                R.id.orderStatusFragment
             )
             
             if (destination.id in hideBottomNavScreens) {
