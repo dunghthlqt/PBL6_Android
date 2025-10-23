@@ -1,14 +1,21 @@
 package com.demo.pbl6_android.ui.order
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.demo.pbl6_android.R
+import com.demo.pbl6_android.data.AddressManager
+import com.demo.pbl6_android.data.CartManager
+import com.demo.pbl6_android.data.OrderRepository
+import com.demo.pbl6_android.data.api.ApiResult
+import com.demo.pbl6_android.data.model.Address
 import com.demo.pbl6_android.databinding.FragmentOrderBinding
 import com.demo.pbl6_android.ui.order.adapter.OrderShopAdapter
 import com.demo.pbl6_android.ui.order.model.OrderProduct
@@ -97,41 +104,57 @@ class OrderFragment : Fragment() {
     }
     
     private fun updateVoucherDisplays() {
-        binding.apply {
-            // Update shipping voucher display
-            if (selectedPlatformShippingVoucher != null) {
-                val discount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(
-                    selectedShippingMethod?.price ?: 0, 
-                    selectedPlatformShippingVoucher
-                )
-                if (discount >= (selectedShippingMethod?.price ?: 0)) {
-                    tvSelectShippingVoucher.text = "Miễn Phí Vận Chuyển"
-                } else {
-                    tvSelectShippingVoucher.text = "-${formatPrice(discount)}"
-                }
-                tvSelectShippingVoucher.setTextColor(android.graphics.Color.parseColor("#4CAF50"))
-            } else {
-                tvSelectShippingVoucher.text = "Chọn mã"
-                tvSelectShippingVoucher.setTextColor(android.graphics.Color.parseColor("#4318D1"))
+        // Get shipping price and product total outside binding scope
+        val shippingPrice: Int = selectedShippingMethod?.price ?: 0
+        var productTotal = 0
+        orderShops.forEach { shop ->
+            shop.products.forEach { product ->
+                productTotal += product.currentPrice * product.quantity
             }
+        }
+        
+        binding.apply {
+            // Update platform voucher display (combined)
+            val hasShippingVoucher = selectedPlatformShippingVoucher != null
+            val hasDiscountVoucher = selectedPlatformDiscountVoucher != null
             
-            // Update discount voucher display
-            if (selectedPlatformDiscountVoucher != null) {
-                var productTotal = 0
-                orderShops.forEach { shop ->
-                    shop.products.forEach { product ->
-                        productTotal += product.currentPrice * product.quantity
-                    }
+            when {
+                hasShippingVoucher && hasDiscountVoucher -> {
+                    val shippingDiscount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(
+                        shippingPrice, 
+                        selectedPlatformShippingVoucher
+                    )
+                    val productDiscount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(
+                        productTotal, 
+                        selectedPlatformDiscountVoucher
+                    )
+                    tvSelectPlatformVoucher.text = "2 voucher đã chọn"
+                    tvSelectPlatformVoucher.setTextColor(android.graphics.Color.parseColor("#4318D1"))
                 }
-                val discount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(
-                    productTotal, 
-                    selectedPlatformDiscountVoucher
-                )
-                tvSelectDiscountVoucher.text = "-${formatPrice(discount)}"
-                tvSelectDiscountVoucher.setTextColor(android.graphics.Color.parseColor("#9C27B0"))
-            } else {
-                tvSelectDiscountVoucher.text = "Chọn mã"
-                tvSelectDiscountVoucher.setTextColor(android.graphics.Color.parseColor("#4318D1"))
+                hasShippingVoucher -> {
+                    val discount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(
+                        shippingPrice, 
+                        selectedPlatformShippingVoucher
+                    )
+                    if (discount >= shippingPrice) {
+                        tvSelectPlatformVoucher.text = "Miễn phí vận chuyển"
+                    } else {
+                        tvSelectPlatformVoucher.text = "-${formatPrice(discount)}"
+                    }
+                    tvSelectPlatformVoucher.setTextColor(android.graphics.Color.parseColor("#4CAF50"))
+                }
+                hasDiscountVoucher -> {
+                    val discount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(
+                        productTotal, 
+                        selectedPlatformDiscountVoucher
+                    )
+                    tvSelectPlatformVoucher.text = "-${formatPrice(discount)}"
+                    tvSelectPlatformVoucher.setTextColor(android.graphics.Color.parseColor("#9C27B0"))
+                }
+                else -> {
+                    tvSelectPlatformVoucher.text = "Chọn mã"
+                    tvSelectPlatformVoucher.setTextColor(android.graphics.Color.parseColor("#4318D1"))
+                }
             }
             
             // Update shop voucher display in adapter
@@ -155,12 +178,8 @@ class OrderFragment : Fragment() {
                 findNavController().navigate(R.id.action_orderFragment_to_shippingMethodFragment)
             }
 
-            layoutShippingVoucher.setOnClickListener {
-                findNavController().navigate(R.id.action_orderFragment_to_platformVoucherFragment)
-            }
-            
-            layoutDiscountVoucher.setOnClickListener {
-                findNavController().navigate(R.id.action_orderFragment_to_platformVoucherFragment)
+            layoutPlatformVoucher.setOnClickListener {
+                findNavController().navigate(R.id.action_orderFragment_to_platformVoucherSelectionFragment)
             }
 
             btnPlaceOrder.setOnClickListener {
@@ -413,98 +432,99 @@ class OrderFragment : Fragment() {
     }
 
     private fun placeOrder() {
+        // Validate inputs
         if (shippingAddress == null) {
-            android.widget.Toast.makeText(requireContext(), "Vui lòng chọn địa chỉ giao hàng", android.widget.Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Vui lòng chọn địa chỉ giao hàng", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (selectedShippingMethod == null) {
-            android.widget.Toast.makeText(requireContext(), "Vui lòng chọn phương thức vận chuyển", android.widget.Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Vui lòng chọn phương thức vận chuyển", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (orderShops.isEmpty()) {
-            android.widget.Toast.makeText(requireContext(), "Giỏ hàng trống", android.widget.Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Giỏ hàng trống", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val orderId = generateOrderId()
-        val paymentMethodString = when (selectedPaymentMethod) {
-            PaymentMethod.CASH_ON_DELIVERY -> "CASH_ON_DELIVERY"
-            PaymentMethod.BANK_TRANSFER -> "BANK_TRANSFER"
+        // Show loading dialog
+        val progressDialog = ProgressDialog(requireContext()).apply {
+            setMessage("Đang đặt hàng...")
+            setCancelable(false)
+            show()
         }
-        
-        // Calculate totals
-        var productTotal = 0
-        orderShops.forEach { shop ->
-            shop.products.forEach { product ->
-                productTotal += product.currentPrice * product.quantity
-            }
-        }
-        
-        var shippingTotal = selectedShippingMethod?.price ?: 0
-        val originalShippingTotal = shippingTotal
-        
-        // Apply discounts
-        val platformDiscount = if (selectedPlatformVoucher != null) {
-            val isShippingVoucher = selectedPlatformVoucher!!.code.contains("SHIP", ignoreCase = true) || 
-                                    selectedPlatformVoucher!!.title.contains("vận chuyển", ignoreCase = true)
-            
-            if (isShippingVoucher) {
-                val discount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(shippingTotal, selectedPlatformVoucher)
-                shippingTotal -= discount
-                if (shippingTotal < 0) shippingTotal = 0
-                discount
-            } else {
-                com.demo.pbl6_android.data.VoucherManager.calculateDiscount(productTotal, selectedPlatformVoucher)
-            }
-        } else {
-            0
-        }
-        
-        val shopDiscount = com.demo.pbl6_android.data.VoucherManager.calculateDiscount(productTotal, selectedShopVoucher)
-        val totalDiscount = platformDiscount + shopDiscount
-        val grandTotal = productTotal + shippingTotal - totalDiscount
 
-        // Create order object
-        val firstShop = orderShops.firstOrNull()
-        val order = com.demo.pbl6_android.data.model.Order(
-            orderId = orderId,
-            orderCode = orderId,
-            orderDate = System.currentTimeMillis(),
-            status = if (selectedPaymentMethod == PaymentMethod.CASH_ON_DELIVERY) 
-                        com.demo.pbl6_android.data.model.OrderStatus.PENDING_PICKUP 
-                     else 
-                        com.demo.pbl6_android.data.model.OrderStatus.PENDING_PICKUP,
-            items = orderShops.flatMap { shop ->
-                shop.products.map { product ->
-                    com.demo.pbl6_android.data.model.OrderItem(
-                        productId = product.id,
-                        productName = product.name,
-                        productImage = product.imageUrl,
-                        color = product.color,
-                        size = product.size,
-                        price = product.currentPrice,
-                        quantity = product.quantity
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Get user's address from AddressManager
+            val address = AddressManager.getDefaultAddress()
+            
+            if (address == null) {
+                progressDialog.dismiss()
+                Toast.makeText(
+                    requireContext(),
+                    "Vui lòng thêm địa chỉ giao hàng trong cài đặt",
+                    Toast.LENGTH_LONG
+                ).show()
+                return@launch
+            }
+
+            // Determine payment method
+            val paymentMethodString = when (selectedPaymentMethod) {
+                PaymentMethod.CASH_ON_DELIVERY -> "COD"
+                PaymentMethod.BANK_TRANSFER -> "BANK_TRANSFER"
+            }
+
+            // Get promotion code if selected
+            val promotionCode = selectedPlatformDiscountVoucher?.code
+
+            // Call checkout API
+            val result = OrderRepository.checkout(
+                address = address,
+                paymentMethod = paymentMethodString,
+                note = null, // You can add a note input field if needed
+                promotionCode = promotionCode
+            )
+
+            progressDialog.dismiss()
+
+            when (result) {
+                is ApiResult.Success -> {
+                    // Clear cart after successful checkout
+                    CartManager.clearCart()
+
+                    // Get first order ID for navigation
+                    val orderId = result.data.orders.firstOrNull()?.id ?: ""
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Đặt hàng thành công!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    // Navigate to order status/success screen
+                    val bundle = Bundle().apply {
+                        putString("orderId", orderId)
+                        putString("paymentMethod", paymentMethodString)
+                    }
+
+                    findNavController().navigate(
+                        R.id.action_orderFragment_to_orderStatusFragment,
+                        bundle
                     )
                 }
-            },
-            totalAmount = grandTotal,
-            shopId = firstShop?.shopId ?: "",
-            shopName = firstShop?.shopName ?: "",
-            shippingAddress = shippingAddress!!.fullAddress,
-            paymentMethod = if (selectedPaymentMethod == PaymentMethod.CASH_ON_DELIVERY) "Thanh toán khi nhận hàng" else "Chuyển khoản ngân hàng"
-        )
-        
-        // Save order to history
-        com.demo.pbl6_android.data.OrderHistoryManager.addOrder(order)
-
-        val bundle = Bundle().apply {
-            putString("paymentMethod", paymentMethodString)
-            putString("orderId", orderId)
+                is ApiResult.Error -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "Lỗi đặt hàng: ${result.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                is ApiResult.Loading -> {
+                    // Already showing loading dialog
+                }
+            }
         }
-
-        findNavController().navigate(R.id.action_orderFragment_to_orderStatusFragment, bundle)
     }
 
     private fun generateOrderId(): String {

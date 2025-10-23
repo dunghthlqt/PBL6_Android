@@ -10,9 +10,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.demo.pbl6_android.R
 import com.demo.pbl6_android.data.AddressManager
+import com.demo.pbl6_android.data.api.ApiResult
 import com.demo.pbl6_android.data.model.Address
 import com.demo.pbl6_android.databinding.FragmentAddressSelectionBinding
 import com.demo.pbl6_android.ui.address.adapter.AddressAdapter
+import com.demo.pbl6_android.ui.common.CustomToast
 import kotlinx.coroutines.launch
 
 class AddressSelectionFragment : Fragment() {
@@ -36,6 +38,7 @@ class AddressSelectionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         observeAddresses()
+        loadAddressFromApi()
     }
 
     private fun setupViews() {
@@ -48,6 +51,32 @@ class AddressSelectionFragment : Fragment() {
                 navigateToAddAddress()
             }
         }
+    }
+
+    private fun loadAddressFromApi() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            showLoading(true)
+            val result = AddressManager.loadAddress()
+            showLoading(false)
+
+            when (result) {
+                is ApiResult.Success -> {
+                    // Addresses will be updated via StateFlow
+                    android.util.Log.d("AddressSelection", "✅ Address loaded")
+                }
+                is ApiResult.Error -> {
+                    CustomToast.show(requireContext(), "Lỗi tải địa chỉ: ${result.message}")
+                }
+                is ApiResult.Loading -> {
+                    // Already showing loading
+                }
+            }
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        // TODO: Show/hide loading indicator
+        binding.btnAddAddress.isEnabled = !isLoading
     }
 
     private fun observeAddresses() {

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.demo.pbl6_android.R
@@ -12,6 +13,7 @@ import com.demo.pbl6_android.data.ProductRepository
 import com.demo.pbl6_android.data.model.Product
 import com.demo.pbl6_android.databinding.FragmentSearchResultsBinding
 import com.demo.pbl6_android.ui.landing.adapter.ProductAdapter
+import kotlinx.coroutines.launch
 
 class SearchResultsFragment : Fragment() {
 
@@ -62,14 +64,36 @@ class SearchResultsFragment : Fragment() {
     }
 
     private fun performSearch() {
-        // For now, we'll show all products as sample data
-        // In the future, this will filter based on searchQuery
-        val products = ProductRepository.getAllProducts()
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Use search API if query is not empty, otherwise show all products
+            val result = if (searchQuery.isNotEmpty()) {
+                ProductRepository.searchProducts(searchQuery)
+            } else {
+                ProductRepository.getAllProducts()
+            }
+            
+            if (_binding == null) return@launch
 
-        if (products.isEmpty()) {
-            showEmptyState()
-        } else {
-            showResults(products)
+            when (result) {
+                is com.demo.pbl6_android.data.api.ApiResult.Success -> {
+                    if (result.data.isEmpty()) {
+                        showEmptyState()
+                    } else {
+                        showResults(result.data)
+                    }
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Error -> {
+                    showEmptyState()
+                    android.widget.Toast.makeText(
+                        requireContext(),
+                        "Có lỗi xảy ra: ${result.message}",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Loading -> {
+                    // Show loading if needed
+                }
+            }
         }
     }
 

@@ -79,6 +79,15 @@ class AccountFragment : Fragment() {
             findNavController().navigate(R.id.action_accountFragment_to_paymentMethodsFragment)
         }
         
+        setupMenuItem(
+            R.id.menu_my_reviews,
+            R.drawable.ic_order_review,
+            "Đánh giá của tôi",
+            "Quản lý đánh giá sản phẩm"
+        ) {
+            findNavController().navigate(R.id.action_accountFragment_to_myReviewsFragment)
+        }
+        
         // Settings menus with switches
         setupMenuItemWithSwitch(
             R.id.menu_notification,

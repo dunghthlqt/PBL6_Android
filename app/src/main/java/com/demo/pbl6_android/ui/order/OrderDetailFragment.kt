@@ -6,17 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.demo.pbl6_android.R
 import com.demo.pbl6_android.data.OrderRepository
 import com.demo.pbl6_android.data.ProductRepository
+import com.demo.pbl6_android.data.api.ApiResult
 import com.demo.pbl6_android.data.model.Order
 import com.demo.pbl6_android.data.model.OrderStatus
 import com.demo.pbl6_android.databinding.FragmentOrderDetailBinding
 import com.demo.pbl6_android.ui.order.adapter.OrderDetailProductAdapter
 import com.demo.pbl6_android.ui.product.adapter.RelatedProductAdapter
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -60,9 +63,48 @@ class OrderDetailFragment : Fragment() {
     private fun loadOrderDetails() {
         val orderId = arguments?.getString("orderId") ?: return
         
-        order = OrderRepository.getOrderById(orderId)
+        showLoading(true)
         
-        order?.let { displayOrder(it) }
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = OrderRepository.getOrderById(orderId)
+            
+            showLoading(false)
+            
+            when (result) {
+                is ApiResult.Success -> {
+                    order = result.data
+                    displayOrder(result.data)
+                }
+                is ApiResult.Error -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "Lỗi tải chi tiết đơn hàng: ${result.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    findNavController().navigateUp()
+                }
+                is ApiResult.Loading -> {
+                    // Already showing loading
+                }
+            }
+        }
+    }
+    
+    private fun showLoading(isLoading: Boolean) {
+        // Note: NestedScrollView in layout doesn't have an ID
+        // For now, we'll just show loading via Toast/Dialog
+        // TODO: Add a proper ProgressBar overlay to the layout if needed
+        binding.apply {
+            if (isLoading) {
+                // Disable interactions while loading
+                btnBack.isEnabled = false
+                btnMenu.isEnabled = false
+            } else {
+                // Re-enable interactions
+                btnBack.isEnabled = true
+                btnMenu.isEnabled = true
+            }
+        }
     }
 
     private fun displayOrder(order: Order) {
@@ -278,18 +320,31 @@ class OrderDetailFragment : Fragment() {
     }
 
     private fun loadRecommendedProducts() {
-        val products = ProductRepository.getAllProducts().take(4)
-        
-        val adapter = RelatedProductAdapter(products) { product ->
-            val bundle = Bundle().apply {
-                putString("productId", product.id)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = ProductRepository.getAllProducts()
+            if (_binding == null) return@launch
+            
+            when (result) {
+                is com.demo.pbl6_android.data.api.ApiResult.Success -> {
+                    val products = result.data.take(4)
+                    val adapter = RelatedProductAdapter(products) { product ->
+                        val bundle = Bundle().apply {
+                            putString("productId", product.id)
+                        }
+                        findNavController().navigate(R.id.action_orderDetailFragment_to_productDetailFragment, bundle)
+                    }
+                    
+                    binding.rvRecommendedProducts.apply {
+                        layoutManager = GridLayoutManager(requireContext(), 2)
+                        this.adapter = adapter
+                    }
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Error -> {
+                    // Hide recommended products section on error
+                    binding.rvRecommendedProducts.visibility = android.view.View.GONE
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Loading -> {}
             }
-            findNavController().navigate(R.id.action_orderDetailFragment_to_productDetailFragment, bundle)
-        }
-        
-        binding.rvRecommendedProducts.apply {
-            layoutManager = GridLayoutManager(requireContext(), 2)
-            this.adapter = adapter
         }
     }
 
@@ -351,11 +406,38 @@ class OrderDetailFragment : Fragment() {
             .setTitle("Hủy đơn hàng")
             .setMessage("Bạn có chắc chắn muốn hủy đơn hàng này?")
             .setPositiveButton("Hủy đơn") { _, _ ->
-                showToast("Đã hủy đơn hàng")
-                findNavController().navigateUp()
+                cancelOrderViaApi(order.orderId)
             }
             .setNegativeButton("Không", null)
             .show()
+    }
+    
+    private fun cancelOrderViaApi(orderId: String) {
+        showLoading(true)
+        
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = OrderRepository.cancelOrder(orderId, "Khách hàng hủy đơn")
+            
+            showLoading(false)
+            
+            when (result) {
+                is ApiResult.Success -> {
+                    showToast("Đã hủy đơn hàng thành công")
+                    // Reload order details to show updated status
+                    loadOrderDetails()
+                }
+                is ApiResult.Error -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "Lỗi khi hủy đơn hàng: ${result.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                is ApiResult.Loading -> {
+                    // Already showing loading
+                }
+            }
+        }
     }
 
     private fun handleContactShop(order: Order) {

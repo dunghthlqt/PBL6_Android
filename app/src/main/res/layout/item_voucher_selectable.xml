@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_voucher"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_voucher_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="12dp">
+
+        <!-- Radio Button -->
+        <RadioButton
+            android:id="@+id/rb_voucher"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:button="@drawable/radio_button_custom"
+            android:clickable="false"
+            android:focusable="false"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Voucher Icon/Badge -->
+        <View
+            android:id="@+id/voucher_badge"
+            android:layout_width="8dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="12dp"
+            android:background="#EE4D2D"
+            app:layout_constraintStart_toEndOf="@+id/rb_voucher"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Voucher Content -->
+        <LinearLayout
+            android:id="@+id/voucher_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/btn_details"
+            app:layout_constraintStart_toEndOf="@+id/voucher_badge"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Voucher Title -->
+            <TextView
+                android:id="@+id/tv_voucher_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Giảm 95% tối đa 1tr cho đơn từ 1tr"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <!-- Voucher Code -->
+            <TextView
+                android:id="@+id/tv_voucher_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="FREESHIP123"
+                android:textColor="#64748B"
+                android:textSize="12sp" />
+
+            <!-- Usage Info -->
+            <TextView
+                android:id="@+id/tv_usage_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Đã dùng 65% • hết hạn trong: Còn 2 giờ"
+                android:textColor="#F97316"
+                android:textSize="11sp" />
+
+            <!-- Expiry Date -->
+            <TextView
+                android:id="@+id/tv_expiry_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="HSD: 31.10.2025"
+                android:textColor="#64748B"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <!-- Details Button -->
+        <TextView
+            android:id="@+id/btn_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="Điều kiện"
+            android:textColor="#4318D1"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/voucher_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/voucher_content" />
+
+        <!-- Disabled Overlay (shown when voucher is not applicable) -->
+        <View
+            android:id="@+id/disabled_overlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#80FFFFFF"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Not Applicable Label -->
+        <TextView
+            android:id="@+id/tv_not_applicable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_not_applicable_label"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="4dp"
+            android:text="Không đủ điều kiện"
+            android:textColor="#DC2626"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/voucher_content"
+            app:layout_constraintTop_toBottomOf="@+id/voucher_content" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
+

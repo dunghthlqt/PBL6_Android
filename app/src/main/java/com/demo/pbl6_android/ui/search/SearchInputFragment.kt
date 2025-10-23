@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.demo.pbl6_android.R
@@ -29,8 +30,17 @@ class SearchInputFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         
-        // Auto focus on search input
-        binding.etSearch.requestFocus()
+        // Disable search temporarily
+        binding.etSearch.isEnabled = false
+        binding.btnSearch.isEnabled = false
+        binding.btnSearch.alpha = 0.5f
+        
+        // Show message
+        Toast.makeText(
+            requireContext(),
+            "Chức năng tìm kiếm tạm thời bị vô hiệu hóa",
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     private fun setupViews() {
@@ -40,12 +50,12 @@ class SearchInputFragment : Fragment() {
             }
 
             btnSearch.setOnClickListener {
-                performSearch()
+                showDisabledMessage()
             }
 
             etSearch.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    performSearch()
+                    showDisabledMessage()
                     true
                 } else {
                     false
@@ -53,18 +63,18 @@ class SearchInputFragment : Fragment() {
             }
         }
     }
+    
+    private fun showDisabledMessage() {
+        Toast.makeText(
+            requireContext(),
+            "Chức năng tìm kiếm đang được bảo trì",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
 
     private fun performSearch() {
-        val query = binding.etSearch.text.toString().trim()
-        if (query.isNotEmpty()) {
-            val bundle = Bundle().apply {
-                putString("searchQuery", query)
-            }
-            findNavController().navigate(
-                R.id.action_searchInputFragment_to_searchResultsFragment,
-                bundle
-            )
-        }
+        // Temporarily disabled
+        showDisabledMessage()
     }
 
     override fun onDestroyView() {

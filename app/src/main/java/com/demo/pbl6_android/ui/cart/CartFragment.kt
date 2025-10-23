@@ -41,6 +41,7 @@ class CartFragment : Fragment() {
         setupViews()
         setupRecyclerView()
         observeCart()
+        loadCartFromApi()
     }
 
     private fun setupViews() {
@@ -140,12 +141,27 @@ class CartFragment : Fragment() {
     }
 
     private fun deleteProduct(product: CartProduct) {
-        cartShops.forEach { shop ->
-            shop.products.remove(product)
+        viewLifecycleOwner.lifecycleScope.launch {
+            showLoading(true)
+            
+            val result = CartManager.removeFromCart(
+                productVariantId = product.id,
+                colorId = null // TODO: Get actual color ID
+            )
+            
+            if (_binding == null) return@launch
+            showLoading(false)
+            
+            when (result) {
+                is com.demo.pbl6_android.data.api.ApiResult.Success -> {
+                    // Cart will be updated via observeCart()
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Error -> {
+                    showError(result.message)
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Loading -> {}
+            }
         }
-        cartShops.removeAll { it.products.isEmpty() }
-        cartShopAdapter.submitList(cartShops.toList())
-        updateTotalPrice()
     }
 
     private fun updateSelectAllCheckbox() {
@@ -201,7 +217,7 @@ class CartFragment : Fragment() {
         }
         
         if (selectedShopsWithProducts.isEmpty()) {
-            // TODO: Show message: please select at least one product
+            showError("Vui lòng chọn ít nhất một sản phẩm")
             return
         }
         
@@ -210,6 +226,46 @@ class CartFragment : Fragment() {
         
         // Navigate to order/checkout screen
         findNavController().navigate(R.id.action_cartFragment_to_orderFragment)
+    }
+    
+    /**
+     * Load cart from API
+     */
+    private fun loadCartFromApi() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            showLoading(true)
+            
+            val result = CartManager.loadCart()
+            
+            if (_binding == null) return@launch
+            showLoading(false)
+            
+            when (result) {
+                is com.demo.pbl6_android.data.api.ApiResult.Success -> {
+                    // Cart will be updated via observeCart()
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Error -> {
+                    showError(result.message)
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Loading -> {}
+            }
+        }
+    }
+    
+    private fun showLoading(isLoading: Boolean) {
+        _binding?.apply {
+            if (isLoading) {
+                // TODO: Show loading indicator
+            } else {
+                // TODO: Hide loading indicator
+            }
+        }
+    }
+    
+    private fun showError(message: String) {
+        context?.let {
+            android.widget.Toast.makeText(it, message, android.widget.Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroyView() {

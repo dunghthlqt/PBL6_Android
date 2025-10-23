@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.demo.pbl6_android.R
 import com.demo.pbl6_android.data.model.Product
 import com.demo.pbl6_android.databinding.ItemProductGridBinding
 
@@ -34,8 +37,16 @@ class ProductGridAdapter(
 
         fun bind(product: Product) {
             binding.apply {
-                // TODO: Load image using Glide or similar
-                // Glide.with(root.context).load(product.images.firstOrNull()).into(ivProductImage)
+                // Load product image with Glide
+                // Use fitCenter to maintain aspect ratio with fixed width
+                val imageUrl = product.images.firstOrNull() ?: ""
+                Glide.with(ivProductImage.context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_launcher_foreground)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .fitCenter() // Maintain aspect ratio, show full image
+                    .into(ivProductImage)
 
                 tvProductName.text = product.name
                 tvRating.text = product.rating.toString()

@@ -1,6 +1,7 @@
 package com.demo.pbl6_android.ui.address
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,13 +9,16 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.demo.pbl6_android.R
 import com.demo.pbl6_android.data.AddressManager
 import com.demo.pbl6_android.data.VietnamAddressData
+import com.demo.pbl6_android.data.api.ApiResult
 import com.demo.pbl6_android.data.model.Address
 import com.demo.pbl6_android.databinding.FragmentAddressFormBinding
 import com.demo.pbl6_android.ui.common.CustomToast
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 class AddressFormFragment : Fragment() {
@@ -234,16 +238,36 @@ class AddressFormFragment : Fragment() {
             isDefault = false
         )
 
-        if (addressId != null) {
-            AddressManager.updateAddress(address)
-            CustomToast.show(requireContext(), "Đã cập nhật địa chỉ")
-        } else {
-            AddressManager.addAddress(address)
-            CustomToast.show(requireContext(), "Đã thêm địa chỉ mới")
+        // Show loading dialog
+        val progressDialog = ProgressDialog(requireContext()).apply {
+            setMessage("Đang lưu địa chỉ...")
+            setCancelable(false)
+            show()
         }
 
-        hasChanges = false
-        findNavController().navigateUp()
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = AddressManager.saveAddress(address)
+
+            progressDialog.dismiss()
+
+            when (result) {
+                is ApiResult.Success -> {
+                    hasChanges = false
+                    if (addressId != null) {
+                        CustomToast.show(requireContext(), "Đã cập nhật địa chỉ")
+                    } else {
+                        CustomToast.show(requireContext(), "Đã thêm địa chỉ mới")
+                    }
+                    findNavController().navigateUp()
+                }
+                is ApiResult.Error -> {
+                    CustomToast.show(requireContext(), "Lỗi: ${result.message}")
+                }
+                is ApiResult.Loading -> {
+                    // Already showing loading dialog
+                }
+            }
+        }
     }
 
     private fun validateInputs(): Boolean {

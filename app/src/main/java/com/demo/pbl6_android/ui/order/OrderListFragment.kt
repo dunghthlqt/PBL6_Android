@@ -4,13 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.demo.pbl6_android.data.OrderRepository
+import com.demo.pbl6_android.data.api.ApiResult
 import com.demo.pbl6_android.data.model.OrderStatus
 import com.demo.pbl6_android.databinding.FragmentOrderListBinding
 import com.demo.pbl6_android.ui.order.adapter.OrderHistoryAdapter
+import kotlinx.coroutines.launch
 
 class OrderListFragment : Fragment() {
 
@@ -92,12 +96,46 @@ class OrderListFragment : Fragment() {
     }
 
     private fun loadOrders() {
-        val orders = orderStatus?.let { status ->
-            OrderRepository.getOrdersByStatus(status)
-        } ?: emptyList()
-
-        orderAdapter.submitList(orders)
-        updateEmptyState(orders.isEmpty())
+        showLoading(true)
+        
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = orderStatus?.let { status ->
+                OrderRepository.getOrdersByStatus(status, page = 1, size = 50)
+            } ?: OrderRepository.getAllOrders(page = 1, size = 50)
+            
+            showLoading(false)
+            
+            when (result) {
+                is ApiResult.Success -> {
+                    val orders = result.data
+                    orderAdapter.submitList(orders)
+                    updateEmptyState(orders.isEmpty())
+                }
+                is ApiResult.Error -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "Lỗi tải đơn hàng: ${result.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    updateEmptyState(true)
+                }
+                is ApiResult.Loading -> {
+                    // Already showing loading
+                }
+            }
+        }
+    }
+    
+    private fun showLoading(isLoading: Boolean) {
+        binding.apply {
+            if (isLoading) {
+                recyclerView.visibility = View.GONE
+                emptyState.visibility = View.GONE
+                // TODO: Add proper loading indicator if needed
+            } else {
+                // Visibility will be set by updateEmptyState
+            }
+        }
     }
 
     private fun updateEmptyState(isEmpty: Boolean) {

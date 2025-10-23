@@ -145,11 +145,27 @@ class ProductDetailFragment : Fragment() {
     private fun loadProduct() {
         val productId = arguments?.getString("productId") ?: return
         
-        product = ProductRepository.getProductById(productId)
-        
-        product?.let { product ->
-            displayProduct(product)
-            loadRelatedProducts(product.id)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = ProductRepository.getProductById(productId)
+            if (_binding == null) return@launch
+            
+            when (result) {
+                is com.demo.pbl6_android.data.api.ApiResult.Success -> {
+                    product = result.data
+                    displayProduct(result.data)
+                    loadRelatedProducts(result.data.id)
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Error -> {
+                    android.widget.Toast.makeText(
+                        requireContext(),
+                        "Có lỗi xảy ra: ${result.message}",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                    // Navigate back if product not found
+                    findNavController().navigateUp()
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Loading -> {}
+            }
         }
     }
     
@@ -266,16 +282,26 @@ class ProductDetailFragment : Fragment() {
         bottomSheetDialog.show()
     }
     
-    private fun loadRelatedProducts(currentProductId: String) {
-        val relatedProducts = ProductRepository.getRelatedProducts(currentProductId, 4)
+    private suspend fun loadRelatedProducts(currentProductId: String) {
+        val result = ProductRepository.getRelatedProducts(currentProductId, 4)
+        if (_binding == null) return
         
-        val relatedAdapter = RelatedProductAdapter(relatedProducts) { product ->
-            navigateToProduct(product.id)
-        }
-        
-        binding.rvRelatedProducts.apply {
-            layoutManager = GridLayoutManager(requireContext(), 2)
-            adapter = relatedAdapter
+        when (result) {
+            is com.demo.pbl6_android.data.api.ApiResult.Success -> {
+                val relatedAdapter = RelatedProductAdapter(result.data) { product ->
+                    navigateToProduct(product.id)
+                }
+                
+                binding.rvRelatedProducts.apply {
+                    layoutManager = GridLayoutManager(requireContext(), 2)
+                    adapter = relatedAdapter
+                }
+            }
+            is com.demo.pbl6_android.data.api.ApiResult.Error -> {
+                // Hide related products section on error
+                binding.rvRelatedProducts.visibility = android.view.View.GONE
+            }
+            is com.demo.pbl6_android.data.api.ApiResult.Loading -> {}
         }
     }
     
@@ -297,8 +323,32 @@ class ProductDetailFragment : Fragment() {
         val selectedColor = colorAdapter?.getSelectedColor()?.name ?: "Default"
         val selectedSize = sizeAdapter?.getSelectedSize() ?: "Default"
         
-        CartManager.addToCart(currentProduct, selectedColor, selectedSize, quantity)
-        com.demo.pbl6_android.ui.common.CustomToast.show(requireContext(), "Đã thêm vào giỏ hàng")
+        // Add to cart via API
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = CartManager.addToCart(
+                product = currentProduct,
+                selectedColor = selectedColor,
+                selectedSize = selectedSize,
+                quantity = quantity
+            )
+            
+            when (result) {
+                is com.demo.pbl6_android.data.api.ApiResult.Success -> {
+                    com.demo.pbl6_android.ui.common.CustomToast.show(
+                        requireContext(),
+                        "Đã thêm vào giỏ hàng"
+                    )
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Error -> {
+                    android.widget.Toast.makeText(
+                        requireContext(),
+                        "Lỗi: ${result.message}",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Loading -> {}
+            }
+        }
     }
     
     private fun buyNow() {

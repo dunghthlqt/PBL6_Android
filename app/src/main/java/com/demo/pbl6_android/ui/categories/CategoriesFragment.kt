@@ -102,8 +102,21 @@ class CategoriesFragment : Fragment() {
     private fun loadPopularProducts() {
         products.clear()
         // Load top 4 popular products
-        products.addAll(ProductRepository.getAllProducts().take(4))
-        productAdapter.notifyDataSetChanged()
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = ProductRepository.getAllProducts()
+            if (_binding == null) return@launch
+            
+            when (result) {
+                is com.demo.pbl6_android.data.api.ApiResult.Success -> {
+                    products.addAll(result.data.take(4))
+                    productAdapter.notifyDataSetChanged()
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Error -> {
+                    // Silently fail for popular products section
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Loading -> {}
+            }
+        }
     }
 
     private fun handleCategoryClick(category: Category) {

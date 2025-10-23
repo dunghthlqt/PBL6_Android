@@ -101,6 +101,9 @@
             android:id="@+id/action_accountFragment_to_paymentMethodsFragment"
             app:destination="@id/paymentMethodsFragment" />
         <action
+            android:id="@+id/action_accountFragment_to_myReviewsFragment"
+            app:destination="@id/myReviewsFragment" />
+        <action
             android:id="@+id/action_accountFragment_to_sellerHomeFragment"
             app:destination="@id/sellerHomeFragment" />
     </fragment>
@@ -156,6 +159,9 @@
             android:id="@+id/action_orderFragment_to_platformVoucherFragment"
             app:destination="@id/platformVoucherFragment" />
         <action
+            android:id="@+id/action_orderFragment_to_platformVoucherSelectionFragment"
+            app:destination="@id/platformVoucherSelectionFragment" />
+        <action
             android:id="@+id/action_orderFragment_to_shippingMethodFragment"
             app:destination="@id/shippingMethodFragment" />
         <action
@@ -209,6 +215,11 @@
         android:id="@+id/platformVoucherFragment"
         android:name="com.demo.pbl6_android.ui.voucher.PlatformVoucherFragment"
         android:label="Platform Voucher" />
+
+    <fragment
+        android:id="@+id/platformVoucherSelectionFragment"
+        android:name="com.demo.pbl6_android.ui.voucher.PlatformVoucherSelectionFragment"
+        android:label="Platform Voucher Selection" />
 
     <fragment
         android:id="@+id/shippingMethodFragment"
@@ -385,5 +396,10 @@
         android:id="@+id/sellerCancelledOrderDetailFragment"
         android:name="com.demo.pbl6_android.ui.seller.SellerCancelledOrderDetailFragment"
         android:label="Chi tiết đơn hàng" />
+
+    <fragment
+        android:id="@+id/myReviewsFragment"
+        android:name="com.demo.pbl6_android.ui.review.MyReviewsFragment"
+        android:label="Đánh giá của tôi" />
 
 </navigation>

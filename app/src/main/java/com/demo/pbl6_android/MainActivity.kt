@@ -25,19 +25,21 @@ class MainActivity : AppCompatActivity() {
     private var cartBadge: BadgeDrawable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Apply theme BEFORE super.onCreate() to prevent recreation
+        themePreferences = ThemePreferences(this)
+        applyThemeSync()
+        
         super.onCreate(savedInstanceState)
         
-        themePreferences = ThemePreferences(this)
         authManager = AuthManager.getInstance(this)
         userModeManager = UserModeManager.getInstance(this)
-        applyTheme()
         
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         
         setupNavigationBasedOnMode()
-        observeThemeChanges()
         observeCartBadge()
+        loadCartOnStart()
     }
     
     override fun onSaveInstanceState(outState: Bundle) {
@@ -132,6 +134,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.orderFragment,
                 R.id.shopVoucherFragment,
                 R.id.platformVoucherFragment,
+                R.id.platformVoucherSelectionFragment,
                 R.id.shippingMethodFragment,
                 R.id.productDetailFragment,
                 R.id.orderHistoryFragment,
@@ -166,36 +169,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun applyTheme() {
-        lifecycleScope.launch {
-            themePreferences.isDarkModeEnabled.collect { isDarkMode ->
-                val mode = if (isDarkMode) {
-                    AppCompatDelegate.MODE_NIGHT_YES
-                } else {
-                    AppCompatDelegate.MODE_NIGHT_NO
-                }
-                AppCompatDelegate.setDefaultNightMode(mode)
-            }
+    /**
+     * Apply theme synchronously to prevent activity recreation
+     * This is called BEFORE super.onCreate()
+     */
+    private fun applyThemeSync() {
+        // Get current theme preference (blocking call is OK here since it's during startup)
+        val sharedPrefs = getSharedPreferences("theme_prefs", MODE_PRIVATE)
+        val isDarkMode = sharedPrefs.getBoolean("dark_mode", false)
+        
+        val mode = if (isDarkMode) {
+            AppCompatDelegate.MODE_NIGHT_YES
+        } else {
+            AppCompatDelegate.MODE_NIGHT_NO
         }
-    }
-
-    private fun observeThemeChanges() {
-        lifecycleScope.launch {
-            themePreferences.isDarkModeEnabled.collect { isDarkMode ->
-                val currentMode = when (AppCompatDelegate.getDefaultNightMode()) {
-                    AppCompatDelegate.MODE_NIGHT_YES -> true
-                    else -> false
-                }
-                
-                if (currentMode != isDarkMode) {
-                    val mode = if (isDarkMode) {
-                        AppCompatDelegate.MODE_NIGHT_YES
-                    } else {
-                        AppCompatDelegate.MODE_NIGHT_NO
-                    }
-                    AppCompatDelegate.setDefaultNightMode(mode)
-                }
-            }
+        
+        // Only apply if different from current mode
+        val currentMode = AppCompatDelegate.getDefaultNightMode()
+        if (currentMode != mode) {
+            AppCompatDelegate.setDefaultNightMode(mode)
         }
     }
     
@@ -212,6 +204,32 @@ class MainActivity : AppCompatActivity() {
                     cartBadge?.isVisible = false
                 }
             }
+        }
+    }
+    
+    /**
+     * Load cart on app start if user is logged in
+     */
+    private fun loadCartOnStart() {
+        // Only load cart if user is logged in
+        if (authManager.isUserLoggedIn()) {
+            lifecycleScope.launch {
+                android.util.Log.d("MainActivity", "🛒 Loading cart on app start...")
+                val result = CartManager.loadCart()
+                
+                when (result) {
+                    is com.demo.pbl6_android.data.api.ApiResult.Success -> {
+                        android.util.Log.d("MainActivity", "✅ Cart loaded successfully on start")
+                    }
+                    is com.demo.pbl6_android.data.api.ApiResult.Error -> {
+                        android.util.Log.e("MainActivity", "❌ Failed to load cart on start: ${result.message}")
+                        // Don't show error to user on start - cart will be empty
+                    }
+                    is com.demo.pbl6_android.data.api.ApiResult.Loading -> {}
+                }
+            }
+        } else {
+            android.util.Log.d("MainActivity", "ℹ️ User not logged in, skipping cart load")
         }
     }
     

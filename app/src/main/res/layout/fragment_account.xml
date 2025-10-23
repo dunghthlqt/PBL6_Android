@@ -195,6 +195,9 @@
                     <include layout="@layout/item_account_menu"
                         android:id="@+id/menu_payment" />
 
+                    <include layout="@layout/item_account_menu"
+                        android:id="@+id/menu_my_reviews" />
+
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>

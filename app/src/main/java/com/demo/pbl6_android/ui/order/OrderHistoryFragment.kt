@@ -74,12 +74,10 @@ class OrderHistoryFragment : Fragment() {
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             val status = statuses[position]
-            tab.text = "${status.displayName} (${getOrderCountForStatus(status)})"
+            // Note: Order count removed because API requires async call
+            // Showing count would require multiple API calls on every tab refresh
+            tab.text = status.displayName
         }.attach()
-    }
-
-    private fun getOrderCountForStatus(status: OrderStatus): Int {
-        return com.demo.pbl6_android.data.OrderRepository.getOrderCountByStatus(status)
     }
 
     override fun onDestroyView() {

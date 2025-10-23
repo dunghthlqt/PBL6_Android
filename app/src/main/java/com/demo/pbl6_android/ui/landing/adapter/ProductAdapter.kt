@@ -4,6 +4,9 @@ import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.demo.pbl6_android.R
 import com.demo.pbl6_android.data.model.Product
 import com.demo.pbl6_android.databinding.ItemProductCardBinding
 
@@ -23,6 +26,17 @@ class ProductAdapter(
                 tvCurrentPrice.text = formatPrice(product.currentPrice)
                 tvOriginalPrice.text = formatPrice(product.originalPrice)
                 tvOriginalPrice.paintFlags = tvOriginalPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                
+                // Load product image with Glide
+                // Use fitCenter to maintain aspect ratio with fixed width
+                val imageUrl = product.images.firstOrNull() ?: ""
+                Glide.with(ivProductImage.context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_launcher_foreground) // Temporary placeholder
+                    .error(R.drawable.ic_launcher_foreground) // Error placeholder
+                    .diskCacheStrategy(DiskCacheStrategy.ALL) // Cache images
+                    .fitCenter() // Maintain aspect ratio, show full image
+                    .into(ivProductImage)
                 
                 root.setOnClickListener {
                     onProductClick(product)

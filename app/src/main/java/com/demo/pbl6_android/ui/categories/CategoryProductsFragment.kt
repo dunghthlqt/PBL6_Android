@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.demo.pbl6_android.R
@@ -12,6 +13,7 @@ import com.demo.pbl6_android.data.ProductRepository
 import com.demo.pbl6_android.data.model.Product
 import com.demo.pbl6_android.databinding.FragmentCategoryProductsBinding
 import com.demo.pbl6_android.ui.categories.adapter.ProductGridAdapter
+import kotlinx.coroutines.launch
 
 class CategoryProductsFragment : Fragment() {
 
@@ -79,12 +81,28 @@ class CategoryProductsFragment : Fragment() {
         products.clear()
         
         // For now, load all products (later filter by category)
-        val allProducts = ProductRepository.getAllProducts()
-        products.addAll(allProducts)
-        
-        productAdapter.notifyDataSetChanged()
-        updateProductCount()
-        updateEmptyState()
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = ProductRepository.getAllProducts()
+            if (_binding == null) return@launch
+            
+            when (result) {
+                is com.demo.pbl6_android.data.api.ApiResult.Success -> {
+                    products.addAll(result.data)
+                    productAdapter.notifyDataSetChanged()
+                    updateProductCount()
+                    updateEmptyState()
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Error -> {
+                    android.widget.Toast.makeText(
+                        requireContext(),
+                        "Có lỗi xảy ra: ${result.message}",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                    updateEmptyState()
+                }
+                is com.demo.pbl6_android.data.api.ApiResult.Loading -> {}
+            }
+        }
     }
 
     private fun updateProductCount() {
